@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description');
             $table->unsignedBigInteger('categories_id');
             $table->json('image');
+            $table->unsignedInteger('jumlah');
             $table->timestamps();
         });
     }

@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('pesanan_barangs', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_barang');
+            $table->unsignedBigInteger('barang_id'); // Mengganti nama_barang menjadi barang_id
             $table->text('description');
             $table->date('tanggal');
             $table->integer('jumlah_pesanan');
+            $table->unsignedBigInteger('user_id'); // Menambahkan kolom user_id pemesan
             $table->timestamps();
         });
     }

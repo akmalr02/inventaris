@@ -16,7 +16,10 @@ return new class extends Migration
             $table->string('nama_barang');
             $table->text('description');
             $table->date('tanggal');
+            $table->json('image');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
+            //tambahkan foto barang rusak dan user id pelapor
         });
     }
 

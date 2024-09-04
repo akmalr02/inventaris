@@ -27,6 +27,8 @@ class AdminController extends Controller
             'email' => 'required',
             'password' => 'required|min:8',
             'role' => ['required', Rule::in(['admin', 'pengelola', 'pemakai'])],
+            'phone' => "required|min:11|max:13|unique:users",
+
         ]);
         $data['password'] = Hash::make($data['password']);
 
@@ -72,8 +74,10 @@ class AdminController extends Controller
         $rules = [
             'name' => 'required|unique:users',
             'email' => 'required|email',
-            'password' => 'required|min:8',
+            'password' => 'nullable|min:8',
             'role' => ['required', Rule::in(['admin', 'pengelola', 'pemakai'])],
+            'phone' => "required|min:11|max:13",
+
         ];
         // var_dump($rules);
         // dd($rules);
@@ -90,9 +94,23 @@ class AdminController extends Controller
         return response()->json($user, 200);
     }
 
-    public function destroy(User $user)
+    public function destroy(String $id)
     {
-        $user->delete();
-        return response()->json(null, 204);
+        // dd($user);
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // var_dump($user);
+        try {
+            $user->delete();
+            return response()->json(['message' => 'User deleted successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to delete user',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
