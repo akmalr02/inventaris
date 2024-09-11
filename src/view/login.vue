@@ -2,16 +2,6 @@
   <div class="item-center">
     <div class="hero dashboard-container h-screen">
       <div class="hero-content flex-col lg:flex-row-reverse">
-        <!-- <div class="text-center lg:text-left">
-          <h1 class="text-5xl font-bold animate-fade-in text-info">
-            Login now!
-          </h1>
-          <p class="py-6 animate-fade-in text-info">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
-            a id nisi.
-          </p>
-        </div> -->
         <div
           class="card bg-base-200 w-full max-w-sm shrink-0 shadow-2xl animate-fade-in"
         >
@@ -46,7 +36,7 @@
                   class="absolute right-2 top-2 btn btn-xs btn-outline"
                 >
                   <component
-                    :is="passwordVisible ? 'EyeIcon' : 'XCircleIcon'"
+                    :is="passwordVisible ? 'XCircleIcon' : 'EyeIcon'"
                     class="w-4 h-4"
                   />
                 </button>
@@ -66,13 +56,13 @@
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import apiClient from "@/service/inventaris";
-// import { EyeIcon, XCircleIcon } from "@vue-hero-icons/outline/index";
+import { EyeIcon, XCircleIcon } from "@heroicons/vue/24/solid";
 
 export default {
-  // components: {
-  //   EyeIcon,
-  //   XCircleIcon,
-  // },
+  components: {
+    EyeIcon,
+    XCircleIcon,
+  },
   data() {
     return {
       email: "",

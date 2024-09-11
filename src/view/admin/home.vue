@@ -1,4 +1,8 @@
-<style></style>
+<style>
+.shadow-custom {
+  box-shadow: 0 10px 30px rgba(50, 50, 50, 0.8);
+}
+</style>
 <template>
   <div class="home text-center">
     <div
@@ -18,8 +22,9 @@
         pertanyaan atau memerlukan bantuan, jangan ragu untuk menghubungi tim
         dukungan kami.
       </p>
+
       <div class="flex flex-col lg:flex-row justify-center items-center">
-        <div class="m-4 p-4 max-w-xs bg-white rounded shadow-lg">
+        <div class="m-4 p-4 max-w-xs bg-white shadow-custom rounded-xl">
           <h2 class="text-3xl font-bold mb-2">Laporan</h2>
           <p class="text-lg">
             Pada bagian ini menyediakan laporan dari pengelola dan pengguna anda
@@ -27,7 +32,7 @@
           </p>
           <a href="/laporan" class="btn btn-outline btn-info mt-3">view</a>
         </div>
-        <div class="m-4 p-4 max-w-xs bg-white rounded shadow-lg">
+        <div class="m-4 p-4 max-w-xs bg-white shadow-custom rounded-xl">
           <h2 class="text-3xl font-bold mb-2">Data User</h2>
           <p class="text-lg">
             pada bagian ini menyediakan semua data pengelola dan pengguna anda

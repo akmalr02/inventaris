@@ -68,15 +68,31 @@
             <label class="label">
               <span class="label-text">Role</span>
             </label>
+            <select v-model="role" class="select select-bordered" required>
+              <option value="" disabled>Pilih Role</option>
+              <option value="admin">Admin</option>
+              <option value="pengelola">Pengelola</option>
+              <option value="pemakai">Pemakai</option>
+            </select>
+            <div v-if="errors.role" class="error-message">
+              <span>{{ errors.role[0] }}</span>
+            </div>
+          </div>
+
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Phone Number</span>
+            </label>
             <input
-              v-model="role"
+              v-model="phone"
               type="text"
-              placeholder="Role"
+              inputmode="numeric"
+              placeholder="Phone Number"
               class="input input-bordered"
               required
             />
-            <div v-if="errors.role" class="error-message">
-              <span>{{ errors.role[0] }}</span>
+            <div v-if="errors.phone" class="error-message">
+              <span>{{ errors.phone[0] }}</span>
             </div>
           </div>
 
@@ -106,18 +122,20 @@ const router = useRouter();
 const name = ref("");
 const email = ref("");
 const role = ref("");
+const phone = ref("");
 const errors = ref([]);
 
 onMounted(async () => {
   try {
     const response = await apiClient.get(`/admin/${route.params.id}`);
-    const human = response.data;
-    console.log(human);
-    name.value = human.name;
-    email.value = human.email;
-    role.value = human.role;
+    const user = response.data;
+    console.log(user);
+    name.value = user.name;
+    email.value = user.email;
+    role.value = user.role;
+    phone.value = user.phone;
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    // console.error("Error fetching user data:", error);
     toast.error("Gagal mengambil data user.", { autoClose: 3000 });
   }
 });
@@ -128,24 +146,31 @@ const updateUser = async () => {
     formData.append("name", name.value);
     formData.append("email", email.value);
     formData.append("role", role.value);
-
+    formData.append("phone", phone.value);
     formData.append("_method", "PATCH");
-    console.log(name.value);
-
-    await apiClient.post(`/admin/${route.params.id}`, formData);
-
-    toast.success("Data user berhasil diperbarui!", { autoClose: 3000 });
-    router.push({ name: "dataUser" });
-  } catch (error) {
-    if (error.response && error.response.data.errors) {
-      errors.value = error.response.data.errors;
-      toast.error("Gagal memperbarui data user.", { autoClose: 3000 });
-    } else {
-      console.error("Error updating user data:", error);
-      toast.error("Terjadi kesalahan saat memperbarui data.", {
-        autoClose: 3000,
+    console.log(role.value);
+    await apiClient
+      .post(`/admin/${route.params.id}`, formData)
+      .then(() => {
+        toast.success("Data user berhasil diperbarui!", { autoClose: 3000 });
+        router.push({ name: "dataUser" });
+      })
+      .catch((error) => {
+        // console.log("Error response:", error.response.data);
+        if (error.response && error.response.data.errors) {
+          errors.value = error.response.data.errors;
+          toast.error("Gagal memperbarui data user.", { autoClose: 3000 });
+        } else {
+          toast.error("Terjadi kesalahan saat memperbarui data.", {
+            autoClose: 3000,
+          });
+        }
       });
-    }
+  } catch (error) {
+    // console.error("Error updating user data:", error);
+    toast.error("Terjadi kesalahan saat memperbarui data.", {
+      autoClose: 3000,
+    });
   }
 };
 </script>
