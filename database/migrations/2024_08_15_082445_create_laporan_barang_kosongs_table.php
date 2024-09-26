@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('laporan_barang_kosongs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('barang_id');
+            $table->unsignedBigInteger('user_id');
             $table->text('description');
             $table->date('tanggal');
-            $table->unsignedBigInteger('user_id');
             $table->timestamps();
         });
     }

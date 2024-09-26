@@ -7,20 +7,24 @@ use App\Models\Barang;
 use Faker\Provider\Base;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+
 
 
 class BarangController extends Controller
 {
     public function index()
     {
-        return Barang::all();
+        $barangs = Barang::with('category')->get();
+
+        return response()->json($barangs, 200);
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required',
-            'description' => 'required',
+            'name' => 'required|unique:barangs|max:255',
+            'description' => 'required|max:255',
             'categories_id' => 'required',
             'image' => 'nullable|array',
             'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -31,7 +35,7 @@ class BarangController extends Controller
             $images = [];
             foreach ($request->file('image') as $file) {
 
-                $path = $file->store('images', 'public');
+                $path = $file->store('barangs', 'public');
                 $images[] = $path;
             }
 
@@ -44,13 +48,13 @@ class BarangController extends Controller
 
     public function show(String $id)
     {
-        $barang = Barang::find($id);
+        $barang = Barang::with('category')->find($id);
 
         if (!$barang) {
-            return response()->json(['massage' => 'barang tidak ditemukan']);
+            return response()->json(['message' => 'Barang tidak ditemukan'], 404);
         }
 
-        return response()->json($barang);
+        return response()->json($barang, 200);
     }
 
     public function update(Request $request, String $id)
@@ -61,20 +65,27 @@ class BarangController extends Controller
             return response()->json(['massage' => 'barang tidak ditemukan']);
         }
 
-        $updateBarang = $request->validate([
-            'name' => 'required',
-            'description' => 'required',
-            'categories_id' => 'required',
+        $ruls = [
+            'name' => 'required|unique:barangs|max:255',
+            'description' => 'required|max:255',
+            'categories_id' => 'required|integer',
             'image' => 'nullable|array',
             'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'jumlah' => 'required'
-        ]);
+            'jumlah' => 'required|integer'
+        ];
+
+        // $validator = Validator::make($request->all(), $ruls);
+
+        // if ($validator->fails()) {
+        //     return response()->json($validator->errors(), 422);
+        // }
+        $updateBarang = $request->validate($ruls);
 
         if ($request->hasFile('image')) {
             $images = [];
             foreach ($request->file('image') as $file) {
 
-                $path = $file->store('images', 'public');
+                $path = $file->store('barangs', 'public');
                 $images[] = $path;
             }
 
@@ -86,6 +97,7 @@ class BarangController extends Controller
             }
             $updateBarang['image'] = json_encode($images);
         }
+        var_dump($barang);
 
         $barang->update($updateBarang);
         return response()->json($barang, 201);

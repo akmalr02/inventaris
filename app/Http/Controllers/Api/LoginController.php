@@ -16,9 +16,10 @@ class LoginController extends Controller
      */
     public function __invoke(Request $request)
     {
+
         //set validation
         $validator = Validator::make($request->all(), [
-            'email'     => 'required',
+            'email'     => 'required|email',
             'password'  => 'required'
         ]);
 

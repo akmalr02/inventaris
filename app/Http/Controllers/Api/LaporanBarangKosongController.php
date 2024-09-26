@@ -12,7 +12,8 @@ class LaporanBarangKosongController extends Controller
 {
     public function index()
     {
-        return LaporanBarangKosong::all();
+        $laporan = LaporanBarangKosong::with(['barang', 'user'])->get();
+        return response()->json($laporan, 200);
     }
 
     public function store(Request $request)
@@ -37,11 +38,14 @@ class LaporanBarangKosongController extends Controller
 
     public function show(String $id)
     {
-        $barangKosong = LaporanBarangKosong::find($id);
+        $barangKosong = LaporanBarangKosong::with('user', 'barang')->find($id);
 
         if (!$barangKosong) {
             return response()->json(['message' => 'Laporan Barang Kosong tidak ditemukan'], 404);
         }
+
+        $barangKosong->user_name = $barangKosong->user ? $barangKosong->user->name : null;
+
         return response()->json($barangKosong);
     }
 

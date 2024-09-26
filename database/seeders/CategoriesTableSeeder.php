@@ -15,16 +15,20 @@ class CategoriesTableSeeder extends Seeder
     {
         DB::table('categories')->insert([
             // Jenis Kertas untuk Perkantoran
-            ['name_categiries' => 'Kertas HVS', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categiries' => 'Kertas Art Paper', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categiries' => 'Kertas Glossy', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categiries' => 'Kertas Matt', 'created_at' => now(), 'updated_at' => now()],
+            ['name_categories' => 'Kertas HVS', 'created_at' => now(), 'updated_at' => now()],
+            ['name_categories' => 'Kertas Art Paper', 'created_at' => now(), 'updated_at' => now()],
+            ['name_categories' => 'Kertas Glossy', 'created_at' => now(), 'updated_at' => now()],
+            ['name_categories' => 'Kertas Matt', 'created_at' => now(), 'updated_at' => now()],
 
             // Alat Tulis
-            ['name_categiries' => 'Pensil', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categiries' => 'Pulpen', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categiries' => 'Penghapus', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categiries' => 'Tip-X', 'created_at' => now(), 'updated_at' => now()],
+            ['name_categories' => 'Pensil', 'created_at' => now(), 'updated_at' => now()],
+            ['name_categories' => 'Pulpen', 'created_at' => now(), 'updated_at' => now()],
+            ['name_categories' => 'Penghapus', 'created_at' => now(), 'updated_at' => now()],
+            ['name_categories' => 'Tip-X', 'created_at' => now(), 'updated_at' => now()],
+
+            // Komputer dan Printer
+            ['name_categories' => 'Komputer', 'created_at' => now(), 'updated_at' => now()],
+            ['name_categories' => 'Printer', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

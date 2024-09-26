@@ -12,7 +12,8 @@ class LaporanPesananBarangController extends Controller
 {
     public function index()
     {
-        return PesananBarang::all();
+        $pesanan = PesananBarang::with(['barang', 'user'])->get();
+        return response()->json($pesanan, 200);
     }
 
     public function store(Request $request)
@@ -37,11 +38,13 @@ class LaporanPesananBarangController extends Controller
 
     public function show($id)
     {
-        $pesananBarang = PesananBarang::find($id);
+        $pesananBarang = PesananBarang::with('user', 'barang')->find($id);
 
         if (!$pesananBarang) {
             return response()->json(['message' => 'Pesanan Barang tidak ditemukan'], 404);
         }
+
+        $pesananBarang->user_name = $pesananBarang->user ? $pesananBarang->user->name : null;
 
         return response()->json($pesananBarang);
     }

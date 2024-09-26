@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('laporan_barang_rusaks', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_barang');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('barang_id');
             $table->text('description');
             $table->date('tanggal');
             $table->json('image');
-            $table->unsignedBigInteger('user_id');
+            $table->integer('jumlah_rusak');
+            $table->enum('kondisi', ['Ringan', 'Sedang', 'Berat']);
             $table->timestamps();
-            //tambahkan foto barang rusak dan user id pelapor
         });
     }
 

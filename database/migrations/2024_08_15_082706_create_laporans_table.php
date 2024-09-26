@@ -13,9 +13,14 @@ return new class extends Migration
     {
         Schema::create('laporans', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->unsignedBigInteger('laporan_barang_rusak_id')->nullable();
+            $table->foreign('laporan_barang_rusak_id')->references('id')->on('laporan_barang_rusaks')->onDelete('set null');
             $table->unsignedBigInteger('laporan_barang_kosong_id')->nullable();
+            $table->foreign('laporan_barang_kosong_id')->references('id')->on('laporan_barang_kosongs')->onDelete('set null');
             $table->unsignedBigInteger('pesanan_barang_id')->nullable();
+            $table->foreign('pesanan_barang_id')->references('id')->on('pesanan_barangs')->onDelete('set null');
             $table->timestamps();
         });
     }

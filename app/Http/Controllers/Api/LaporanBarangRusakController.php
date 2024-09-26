@@ -16,7 +16,7 @@ class LaporanBarangRusakController extends Controller
 {
     public function index()
     {
-        $laporan = LaporanBarangRusak::all();
+        $laporan = LaporanBarangRusak::with(['user', 'barang'])->get();
         return response()->json($laporan, 200);
     }
 
@@ -25,9 +25,11 @@ class LaporanBarangRusakController extends Controller
         // $user = User::findOrFail($id);
 
         $data = $request->validate([
-            'nama_barang' => 'required|string',
+            'barang_id' => 'required',
             'description' => 'required|string',
             'tanggal' => 'required|date',
+            'jumlah_rusak' => 'required|integer|min:1',
+            'kondisi' => 'required|in:Ringan,Sedang,Berat',
             'image' => 'nullable|array',
             'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -43,7 +45,7 @@ class LaporanBarangRusakController extends Controller
             try {
                 $images = [];
                 foreach ($request->file('image') as $file) {
-                    $path = $file->store('images', 'public');
+                    $path = $file->store('barangRusak', 'public');
                     $images[] = $path;
                 }
                 $data['image'] = json_encode($images);
@@ -62,11 +64,13 @@ class LaporanBarangRusakController extends Controller
 
     public function show($id)
     {
-        $barangRusak = LaporanBarangRusak::find($id);
+        $barangRusak = LaporanBarangRusak::with('user')->find($id);
 
         if (!$barangRusak) {
             return response()->json(['message' => 'Laporan Barang Rusak tidak ditemukan'], 404);
         }
+
+        $barangRusak->user_name = $barangRusak->user ? $barangRusak->user->name : null;
 
         return response()->json($barangRusak);
     }
@@ -79,11 +83,13 @@ class LaporanBarangRusakController extends Controller
         }
 
         $data = $request->validate([
-            'nama_barang' => 'required|string|max:255',
+            'barang_id' => 'required|exists:barangs,id',
             'description' => 'required|string',
             'tanggal' => 'required|date',
-            // 'image' => 'nullable|array',
-            // 'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
+            'jumlah_rusak' => 'required|integer|min:1',
+            'kondisi' => 'required|in:Ringan,Sedang,Berat',
+            'image' => 'nullable|array',
+            'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $user = Auth::user();
@@ -97,7 +103,7 @@ class LaporanBarangRusakController extends Controller
             try {
                 $images = [];
                 foreach ($request->file('image') as $file) {
-                    $images[] = $file->store('images', 'public');
+                    $images[] = $file->store('barangRusak', 'public');
                 }
 
                 if ($barangRusak->image) {

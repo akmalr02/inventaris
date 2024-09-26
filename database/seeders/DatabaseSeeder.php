@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder
             BarangsTableSeeder::class,
             CategoriesTableSeeder::class,
             PesananBarangsTableSeeder::class,
-            LaporanBarangKosongsTableSeeder::class,
+            // LaporanBarangKosongsTableSeeder::class,
             LaporanBarangRusaksTableSeeder::class,
-            LaporansTableSeeder::class,
+            // LaporansTableSeeder::class,
         ]);
     }
 }
