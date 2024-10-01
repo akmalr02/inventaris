@@ -19,20 +19,26 @@ import laporan from "@/view/admin/laporan.vue";
 import barangKosong from "@/view/laporan/barang_kosong/barangKosong.vue";
 import tambahBarangKosong from "@/view/laporan/barang_kosong/tambah.vue";
 import editBarangKosong from "@/view/laporan/barang_kosong/edit.vue";
+import viewBarangKosong from "@/view/laporan/barang_kosong/view.vue";
 
 // laporoan barang rusak
 
 import barangRusak from "@/view/laporan/barang_rusak/barangRusak.vue";
 import tambahBarangRusak from "@/view/laporan/barang_rusak/tambah.vue";
 import editBarangRusak from "@/view/laporan/barang_rusak/edit.vue";
+import viewBarangRusak from "@/view/laporan/barang_rusak/view.vue";
 
 // laporoan pesanan barnag
 import pesananBarang from "@/view/laporan/pesanan/pesananBarang.vue";
 import editPesananBarang from "@/view/laporan/pesanan/edit.vue";
 import tambahPesananBarang from "@/view/laporan/pesanan/tambah.vue";
+import viewPesanan from "@/view/laporan/pesanan/view.vue";
 
 // barang
-import barang from "@/view/pengelola/barang.vue";
+import barang from "@/view/barang/barang.vue";
+import tambahBarang from "@/view/barang/tambah.vue";
+import editBarang from "@/view/barang/edit.vue";
+import viewBarang from "@/view/barang/view.vue";
 
 const routes = [
   { path: "/login", name: "login", component: Login },
@@ -51,29 +57,31 @@ const routes = [
   // laporan barang rusak
   { path: "/barangRusak", name: "barangRusak", component: barangRusak },
   {
-    path: "/tambahBarangRusak",
+    path: "/tambahR/:id",
     name: "tambahBarangRusak",
     component: tambahBarangRusak,
   },
   {
-    path: "/edit/:id",
+    path: "/editR/:id",
     name: "editBarangRusak",
     component: editBarangRusak,
   },
+  { path: "/viewR/:id", name: "viewBarangKosong", component: viewBarangKosong },
 
   // laporan barang kosong
 
   { path: "/barangKosong", name: "barangKosong", component: barangKosong },
   {
-    path: "/tambahbarangKosong",
+    path: "/tambahK/:id",
     name: "tambahBarangKosong",
     component: tambahBarangKosong,
   },
   {
-    path: "/edit/:id",
+    path: "/editK/:id",
     name: "editBarangKosong",
     component: editBarangKosong,
   },
+  { path: "/viewK/:id", name: "viewBarangRusak", component: viewBarangRusak },
 
   // laporan pesanan barang
 
@@ -84,12 +92,25 @@ const routes = [
     component: tambahPesananBarang,
   },
   {
-    path: "/edit/:id",
+    path: "/editP/:id",
     name: "editPesananBarang",
     component: editPesananBarang,
   },
+  { path: "/viewP/:id", name: "viewPesanan", component: viewPesanan },
 
+  // barang
   { path: "/barang", name: "barang", component: barang },
+  {
+    path: "/tambahBarang",
+    name: "tambahBarang",
+    component: tambahBarang,
+  },
+  {
+    path: "/editB/:id",
+    name: "editBarang",
+    component: editBarang,
+  },
+  { path: "/viewB/:id", name: "viewBarang", component: viewBarang },
 ];
 
 const router = createRouter({

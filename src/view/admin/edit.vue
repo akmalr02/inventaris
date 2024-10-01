@@ -129,7 +129,7 @@ onMounted(async () => {
   try {
     const response = await apiClient.get(`/admin/${route.params.id}`);
     const user = response.data;
-    console.log(user);
+    // console.log(user);
     name.value = user.name;
     email.value = user.email;
     role.value = user.role;

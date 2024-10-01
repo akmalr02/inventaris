@@ -65,7 +65,7 @@ export default {
   },
   data() {
     return {
-      email: "",
+      email: "admin@example.com",
       password: "",
       passwordVisible: false,
     };

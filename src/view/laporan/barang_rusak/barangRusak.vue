@@ -25,9 +25,9 @@
         <BackspaceIcon class="size-6 text-error-200-500" />
         Back</router-link
       >
-      <router-link to="/tambahBarangRusak" class="btn btn-primary mb-3 ml-5">
+      <!-- <router-link to="/tambahBarangRusak" class="btn btn-primary mb-3 ml-5">
         <PlusCircleIcon class="size-6 text-error-200-500" />Buat Laporan
-      </router-link>
+      </router-link> -->
       <div class="header">
         <p class="font-bold">Laporan barang Rusak</p>
       </div>
@@ -40,8 +40,9 @@
           <th class="text-black">Nama User</th>
           <th class="text-black">Nama Barang</th>
           <th class="text-black">Descripsi</th>
+          <th class="text-black">Jumlah Barnag</th>
           <th class="text-black">Tanggal</th>
-          <th class="text-black">Keterangan</th>
+          <th class="text-black">Aksi</th>
         </tr>
       </thead>
       <tbody>
@@ -53,11 +54,15 @@
           </td>
           <td>
             <!-- Tampilkan nama barang jika ada -->
-            {{ laporan.nama_barang ?? "-" }}
+            {{ laporan.barang?.name ?? "-" }}
           </td>
           <td>
             <!-- Tampilkan description jika ada -->
             {{ laporan.description ?? "-" }}
+          </td>
+          <td>
+            <!-- Tampilkan jumlah jika ada -->
+            {{ laporan.jumlah_rusak ?? "-" }}
           </td>
           <td>
             <!-- Tampilkan tanggal jika ada -->

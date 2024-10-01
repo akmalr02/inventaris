@@ -94,7 +94,7 @@
                   <router-link
                     to="/barangKosong"
                     class="dropdown-item"
-                    active-class="bg-white text-black rounded-lg"
+                    active-class="bg-white text-black rounded-lg p-1"
                   >
                     Barang Kosong
                   </router-link>
@@ -103,7 +103,7 @@
                   <router-link
                     to="/barangRusak"
                     class="dropdown-item"
-                    active-class="bg-white text-black rounded-lg"
+                    active-class="bg-white text-black rounded-lg p-1"
                   >
                     Barang Rusak
                   </router-link>
@@ -112,7 +112,7 @@
                   <router-link
                     to="/pesananBarang"
                     class="dropdown-item"
-                    active-class="bg-white text-black rounded-lg"
+                    active-class="bg-white text-black rounded-lg p-1"
                   >
                     Pesanan Barang
                   </router-link>
@@ -160,6 +160,8 @@ import {
   FolderOpenIcon,
   BriefcaseIcon,
 } from "@heroicons/vue/24/solid";
+import jwt_decode from "jwt-decode"; // Pastikan menggunakan cara ini
+import apiClient from "@/service/inventaris"; // Mengimpor apiClient Anda
 
 export default {
   components: {
@@ -180,22 +182,52 @@ export default {
     this.checkAuthStatus();
   },
   mounted() {
-    // Menyimpan flag saat halaman dimuat
+    // Set flag saat halaman dimuat ulang
     sessionStorage.setItem("isPageRefreshed", "false");
 
-    // Menambahkan event listener untuk menangani logout saat tab/jendela ditutup
+    // Tambahkan event listener untuk menangani logout saat tab/jendela ditutup
     window.addEventListener("beforeunload", this.handleBeforeUnload);
-    window.addEventListener("unload", this.handleUnload);
+
+    // Menangani token expired saat menerima response 401 dari backend
+    apiClient.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          this.handleTokenExpired();
+        }
+        return Promise.reject(error);
+      }
+    );
   },
   beforeDestroy() {
-    // Menghapus event listener saat komponen dihancurkan
+    // Hapus event listener saat komponen dihancurkan
     window.removeEventListener("beforeunload", this.handleBeforeUnload);
-    window.removeEventListener("unload", this.handleUnload);
   },
   methods: {
     checkAuthStatus() {
       const token = localStorage.getItem("authToken");
-      this.isLoggedIn = !!token;
+
+      if (token) {
+        // Decode token untuk mendapatkan waktu expired
+        const decodedToken = jwt_decode(token); // Menggunakan jwt_decode
+        const currentTime = Date.now() / 1000; // waktu sekarang dalam detik
+
+        // Cek apakah token sudah expired
+        if (decodedToken.exp < currentTime) {
+          // Jika token expired, logout otomatis
+          this.handleTokenExpired();
+        } else {
+          this.isLoggedIn = true;
+        }
+      } else {
+        this.isLoggedIn = false;
+      }
+    },
+    handleTokenExpired() {
+      // Hapus token dari localStorage dan arahkan ke halaman login
+      localStorage.removeItem("authToken");
+      this.isLoggedIn = false;
+      this.$router.push({ name: "login" });
     },
     logout() {
       localStorage.removeItem("authToken");
@@ -203,17 +235,13 @@ export default {
       this.$router.push({ name: "login" });
     },
     handleBeforeUnload(event) {
-      // Tandai bahwa halaman dimuat ulang jika beforeunload dipicu
+      // Tandai halaman di-refresh
       sessionStorage.setItem("isPageRefreshed", "true");
 
-      // Tidak melakukan apa pun dalam beforeunload untuk tidak menghapus token pada refresh
-    },
-    handleUnload() {
-      // Cek apakah halaman benar-benar ditutup atau dimuat ulang
+      // Mengecek apakah halaman benar-benar ditutup
       const isPageRefreshed = sessionStorage.getItem("isPageRefreshed");
-
       if (isPageRefreshed === "false") {
-        // Jika halaman tidak di-refresh, hapus token (logout)
+        // Jika halaman ditutup, hapus token (logout)
         localStorage.removeItem("authToken");
         this.isLoggedIn = false;
       }
@@ -246,8 +274,24 @@ export default {
   font-size: 0.875rem;
   line-height: 1.25rem;
   padding: 0.5rem;
+  max-height: 642px; /* Adjust height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
+.menu-list::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.menu-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5); /* Color of the scrollbar */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.menu-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1); /* Background of the scrollbar track */
+}
+
+/* Other existing styles remain unchanged */
 .menu-list li {
   display: flex;
   flex-direction: column;

@@ -40,7 +40,7 @@
           <th class="text-black">Nama User</th>
           <th class="text-black">Nama Barang</th>
           <th class="text-black">Descripsi</th>
-          <th class="text-black">Tanggal</th>
+          <th class="text-black">Tanggal Pesan</th>
           <th class="text-black">Jumlah Pesanan</th>
           <th class="text-black">Keterangan</th>
         </tr>

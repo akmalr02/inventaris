@@ -19,7 +19,7 @@
               <option
                 v-for="barang in barangs"
                 :key="barang.id"
-                :value="barang.id"
+                :value="barang.name"
               >
                 {{ barang.name }}
               </option>
@@ -105,6 +105,7 @@ onMounted(async () => {
   try {
     const response = await apiClient.get(`/barangKosong/${route.params.id}`);
     const laporan = response.data;
+    console.log(laporan);
     barang_id.value = laporan.barang_id;
     description.value = laporan.description;
     tanggal.value = laporan.tanggal;

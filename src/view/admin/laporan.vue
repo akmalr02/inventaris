@@ -56,81 +56,117 @@
           @click="activeTab = 'pesananBarang'"
           class="btn btn-outline btn-accent mbs-2"
         >
-          Pesanan Barang
+          Pemakaian Barang
         </button>
       </div>
     </div>
 
     <!-- Tampilkan data berdasarkan tab yang aktif -->
-    <table class="table" v-if="activeTab === 'barangKosong'">
-      <thead>
-        <tr>
-          <th class="text-black">No</th>
-          <th class="text-black">User Name</th>
-          <th class="text-black">Nama Barang Kosong</th>
-          <th class="text-black">Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(barang, index) in barangKosong" :key="barang.id">
-          <th>{{ index + 1 }}</th>
-          <td>{{ barang.user?.name ?? "-" }}</td>
-          <td>{{ barang.barang?.name ?? "-" }}</td>
-          <td>
-            <button class="btn btn-outline btn-error">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-if="activeTab === 'barangKosong'">
+      <h1 class="text-black text-center font-bold text-2xl m-5">
+        Barang Kosong
+      </h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="text-black">No</th>
+            <th class="text-black">Pembuat Laporan</th>
+            <th class="text-black">Nama Barang Kosong</th>
+            <th class="text-black">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(barang, index) in barangKosong" :key="barang.id">
+            <th>{{ index + 1 }}</th>
+            <td>{{ barang.user?.name ?? "-" }}</td>
+            <td>{{ barang.barang?.name ?? "-" }}</td>
+            <td>
+              <router-link
+                :to="{ name: 'viewBarangKosong', params: { id: barang.id } }"
+                class="btn btn-primary items-center"
+              >
+                <EyeIcon class="size-6 text-blue-100-300" /> View
+              </router-link>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <table class="table" v-if="activeTab === 'barangRusak'">
-      <thead>
-        <tr>
-          <th class="text-black">No</th>
-          <th class="text-black">User Name</th>
-          <th class="text-black">Nama Barang Rusak</th>
-          <th class="text-black">Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(barang, index) in barangRusak" :key="barang.id">
-          <th>{{ index + 1 }}</th>
-          <td>{{ barang.user?.name ?? "-" }}</td>
-          <td>{{ barang.nama_barang ?? "-" }}</td>
-          <td>
-            <button class="btn btn-outline btn-error">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-if="activeTab === 'barangRusak'">
+      <h1 class="text-black text-center font-bold text-2xl m-5">
+        Barang Rusak
+      </h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="text-black">No</th>
+            <th class="text-black">Pembuat Laporan</th>
+            <th class="text-black">Nama Barang</th>
+            <th class="text-black">Jumlah Barang</th>
+            <th class="text-black">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(barang, index) in barangRusak" :key="barang.id">
+            <th>{{ index + 1 }}</th>
+            <td>{{ barang.user?.name ?? "-" }}</td>
+            <td>{{ barang.barang?.name ?? "-" }}</td>
+            <td>{{ barang.barang?.jumlah ?? "-" }}</td>
+            <td>
+              <router-link
+                :to="{ name: 'viewBarangRusak', params: { id: barang.id } }"
+                class="btn btn-primary items-center"
+              >
+                <EyeIcon class="size-6 text-blue-100-300" /> View
+              </router-link>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <table class="table" v-if="activeTab === 'pesananBarang'">
-      <thead>
-        <tr>
-          <th class="text-black">No</th>
-          <th class="text-black">User Name</th>
-          <th class="text-black">Nama Barang Pesanan</th>
-          <th class="text-black">Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(pesanan, index) in pesanan" :key="pesanan.id">
-          <th>{{ index + 1 }}</th>
-          <td>{{ pesanan.user?.name ?? "-" }}</td>
-          <td>{{ pesanan.barang?.name ?? "-" }}</td>
-          <td>
-            <button class="btn btn-outline btn-error">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-if="activeTab === 'pesananBarang'">
+      <h1 class="text-black text-center font-bold text-2xl m-5">
+        Pemakaian Barang
+      </h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="text-black">No</th>
+            <th class="text-black">Nama Pemesan</th>
+            <th class="text-black">Nama Barang</th>
+            <th class="text-black">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(pesanan, index) in pesanan" :key="pesanan.id">
+            <th>{{ index + 1 }}</th>
+            <td>{{ pesanan.user?.name ?? "-" }}</td>
+            <td>{{ pesanan.barang?.name ?? "-" }}</td>
+            <td>
+              <router-link
+                :to="{ name: 'viewPesanan', params: { id: pesanan.id } }"
+                class="btn btn-primary items-center"
+              >
+                <EyeIcon class="size-6 text-blue-100-300" /> View
+              </router-link>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
 <script>
 import apiClient from "@/service/inventaris";
+import { EyeIcon } from "@heroicons/vue/24/solid";
 
 export default {
+  components: {
+    EyeIcon,
+  },
   data() {
     return {
       activeTab: "barangKosong",

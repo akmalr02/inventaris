@@ -6,22 +6,19 @@
           Buat Laporan Barang Kosong
         </h2>
 
-        <form @submit.prevent="submitForm" class="card-body pt-3">
-          <!-- Bagian untuk memilih Barang -->
+        <form @submit.prevent="createLaporan" class="card-body pt-3">
+          <!-- Bagian input Barang -->
           <div class="form-control">
             <label class="label">
-              <span class="label-text">Pilih Barang</span>
+              <span class="label-text">Nama Barang</span>
             </label>
-            <select v-model="barang_id" class="select select-bordered" required>
-              <option value="" disabled>Pilih Barang</option>
-              <option
-                v-for="barang in barangs"
-                :key="barang.id"
-                :value="barang.id"
-              >
-                {{ barang.name }}
-              </option>
-            </select>
+            <input
+              v-model="name"
+              type="text"
+              placeholder="Nama Barang"
+              class="input input-bordered"
+              required
+            />
           </div>
 
           <!-- Bagian untuk memasukkan Deskripsi -->
@@ -61,8 +58,8 @@
             <button class="btn btn-primary p-3 mb-2" type="submit">
               Submit
             </button>
-            <router-link to="/barangKosong" class="btn btn-primary p-3">
-              Kembali
+            <router-link to="/barang" class="btn btn-primary p-3">
+              Back
             </router-link>
           </div>
         </form>
@@ -73,69 +70,62 @@
 
 <script>
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import apiClient from "@/service/inventaris";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 
 export default {
   setup() {
-    const barangs = ref([]);
-    const barang_id = ref("");
+    const laporan = ref(null);
+    const name = ref("");
+    const barang_id = ref(null);
     const description = ref("");
     const tanggal = ref("");
     const errors = ref({});
+    const route = useRoute();
 
-    const getBarangs = async () => {
+    const getBarang = async () => {
       try {
-        const response = await apiClient.get("/barang");
-        barangs.value = response.data;
+        const response = await apiClient.get(`/barang/${route.params.id}`);
+        const barang = response.data;
+        barang_id.value = barang.id;
+        name.value = barang.name;
+        tanggal.value = new Date().toISOString().split("T")[0];
+        // console.log(barang);
+        // console.log("Barang:", name.value, "ID:", barang_id.value);
       } catch (error) {
-        console.error("Gagal mengambil data barang:", error);
+        console.error("Gagal mengambil barang:", error);
       }
     };
 
-    const resetForm = () => {
-      barang_id.value = "";
-      description.value = "";
-      tanggal.value = new Date().toISOString().split("T")[0]; // Reset tanggal ke hari ini
-    };
+    onMounted(async () => {
+      await getBarang();
+    });
 
-    const submitForm = async () => {
+    const createLaporan = async () => {
       try {
         const data = {
           barang_id: barang_id.value,
           description: description.value,
-          tanggal: tanggal.value,
+          tanggal: new Date().toISOString().split("T")[0],
         };
-        await apiClient.post("/barangKosong", data);
-        toast.success("Berhasil tambah data laporan", { autoClose: 3000 });
-        resetForm();
+        const response = await apiClient.post("/barangKosong", data);
+        console.log(response.data);
+        toast.success("Laporan barang kosong berhasil disimpan!");
       } catch (error) {
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.errors
-        ) {
-          errors.value = error.response.data.errors;
-        }
-        toast.error("Gagal menambah data laporan!!", { autoClose: 3000 });
+        errors.value = error.response.data.errors || {};
+        console.error("Gagal membuat laporan:", error);
       }
     };
 
-    onMounted(() => {
-      getBarangs();
-
-      // Isi tanggal dengan tanggal hari ini saat komponen dimuat
-      tanggal.value = new Date().toISOString().split("T")[0];
-    });
-
     return {
-      barangs,
-      barang_id,
+      laporan,
+      name,
       description,
       tanggal,
       errors,
-      submitForm,
+      createLaporan,
     };
   },
 };

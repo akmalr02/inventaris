@@ -12,58 +12,49 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 1.2rem;
-  margin: 2rem;
+  padding: 1.2em;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 30px;
+}
+.box-item {
+  flex: 1 1 200px;
+  padding: 2em;
+  background-color: #f3f3f3;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
 }
 </style>
 <template>
   <div class="home">
     <div class="container">
-      <div class="box">
-        <div
-          class="max-w-md mx-auto bg-slate-200 rounded-xl shadow-md overflow-hidden md:max-w-2xl p-4"
-        >
-          <apexchart
-            width="100%"
-            height="500" 
-            type="bar"
-            :options="pesananOptions"
-            :series="pesananSeries"
-            v-if="pesanan.length > 0"
-          />
-          <p v-else>
-            <p>
-              Loading...
-            </p>
-            <span class="loading loading-bars loading-md"></span>
-          </p>
-        </div>
-
-        <div
-          class="max-w-md mx-auto bg-slate-200 rounded-xl shadow-md overflow-hidden md:max-w-2xl p-4"
-        >
-          <div class="md:flex">
+      <div class="col-lg-6">
+        <div class="box">
+          <div class="box-item">
             <apexchart
-              width="100%"
-              height="500"
+              width="600"
+              type="bar"
               :options="barangsOptions"
               :series="barangsSeries"
               v-if="barangs.length > 0"
             />
-            <p v-else>
-              <p>
-                Loading...
-              </p>
-              <span class="loading loading-bars loading-md"></span>
-            </p>
+            <p v-else>Loading data barang...</p>
+          </div>
+
+          <div class="box-item">
+            <apexchart
+              width="600"
+              type="bar"
+              :options="pesananOptions"
+              :series="pesananSeries"
+              v-if="pesanan.length > 0"
+            />
+            <p v-else>Loading data pesanan...</p>
           </div>
         </div>
       </div>
     </div>
   </div>
-
   <footer
     class="footer footer-center bg-base-300 text-base-content rounded p-10"
   >
@@ -191,16 +182,13 @@ export default {
           },
         },
         title: {
-          text: "Stok Barang",
+          text: "Data Barang",
           align: "center",
-          floating: false, 
-          offsetY: 10,
+          floating: true,
         },
         subtitle: {
-          text: "Jumlah Barang yang tersedia",
+          text: "Jumlah Barang per Kategori",
           align: "center",
-          floating: false, 
-
         },
         tooltip: {
           theme: "dark",
@@ -219,7 +207,7 @@ export default {
       pesananOptions: {
         chart: {
           type: "bar",
-          height: 300,
+          height: 350,
         },
         plotOptions: {
           bar: {
@@ -275,16 +263,13 @@ export default {
           },
         },
         title: {
-          text: "Data pemakaian barang",
+          text: "Data Pesanan",
           align: "center",
-          floating: false, 
-          offsetY: 10,
+          floating: true,
         },
         subtitle: {
-          text: "Jumlah pemakaian per Barang",
+          text: "Jumlah Pesanan per Barang",
           align: "center",
-          floating: false, 
-
         },
         tooltip: {
           theme: "dark",

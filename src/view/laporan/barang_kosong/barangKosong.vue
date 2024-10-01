@@ -25,9 +25,7 @@
         <BackspaceIcon class="size-6 text-error-200-500" />
         Back</router-link
       >
-      <router-link to="/tambahbarangKosong" class="btn btn-primary mb-3 ml-5">
-        <PlusCircleIcon class="size-6 text-error-200-500" />Buat Laporan
-      </router-link>
+
       <div class="header">
         <p class="font-bold">Laporan barang Kosong</p>
       </div>
