@@ -5,11 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\LaporanBarangRusak;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Auth\Events\Validated;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 
 class LaporanBarangRusakController extends Controller
@@ -64,13 +61,19 @@ class LaporanBarangRusakController extends Controller
 
     public function show($id)
     {
-        $barangRusak = LaporanBarangRusak::with('user')->find($id);
+        $barangRusak = LaporanBarangRusak::with('user', 'barang')->find($id);
 
         if (!$barangRusak) {
             return response()->json(['message' => 'Laporan Barang Rusak tidak ditemukan'], 404);
         }
 
         $barangRusak->user_name = $barangRusak->user ? $barangRusak->user->name : null;
+
+        if ($barangRusak->barang) {
+            $barangRusak->barang_name = $barangRusak->barang->name;
+        } else {
+            $barangRusak->barang_name = null;
+        }
 
         return response()->json($barangRusak);
     }

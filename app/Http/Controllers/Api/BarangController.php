@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Barang;
-use Faker\Provider\Base;
+use App\Models\LaporanBarangKosong;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 
 
@@ -15,7 +14,7 @@ class BarangController extends Controller
 {
     public function index()
     {
-        $barangs = Barang::with('category')->get();
+        $barangs = Barang::with('category')->where('jumlah', '>', 0)->get();
 
         return response()->json($barangs, 200);
     }
@@ -66,7 +65,7 @@ class BarangController extends Controller
         }
 
         $ruls = [
-            'name' => 'required|unique:barangs|max:255',
+            'name' => 'required|max:255',
             'description' => 'required|max:255',
             'categories_id' => 'required|integer',
             'image' => 'nullable|array',
@@ -74,11 +73,7 @@ class BarangController extends Controller
             'jumlah' => 'required|integer'
         ];
 
-        // $validator = Validator::make($request->all(), $ruls);
 
-        // if ($validator->fails()) {
-        //     return response()->json($validator->errors(), 422);
-        // }
         $updateBarang = $request->validate($ruls);
 
         if ($request->hasFile('image')) {
@@ -120,5 +115,37 @@ class BarangController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function tambahBarang(Request $request, $id)
+    {
+        // Validasi input jumlah dan tanggal
+        $request->validate([
+            'jumlah' => 'required|integer',
+            'tanggal' => 'required|date'
+        ]);
+
+        // Cari laporan barang kosong di tabel laporan_barang_kosongs berdasarkan ID
+        $laporanBarangKosong = LaporanBarangKosong::find($id);
+
+        if (!$laporanBarangKosong) {
+            return response()->json(['message' => 'Laporan barang kosong tidak ditemukan.'], 404);
+        }
+
+        // Cari barang di tabel Barang berdasarkan barang_id dari laporan barang kosong
+        $barang = Barang::find($laporanBarangKosong->barang_id);
+
+        if ($barang) {
+            // Jika barang ada, tambahkan jumlahnya
+            $barang->jumlah += $request->input('jumlah');
+            $barang->save(); // Simpan perubahan
+        } else {
+            return response()->json(['message' => 'Barang tidak ditemukan di tabel barang.'], 404);
+        }
+
+        // Hapus laporan dari tabel laporan_barang_kosongs setelah stok barang diperbarui
+        $laporanBarangKosong->delete();
+
+        return response()->json(['message' => 'Jumlah barang berhasil diperbarui dan laporan barang kosong telah dihapus.', 'data' => $barang], 200);
     }
 }

@@ -20,7 +20,7 @@ class LoginController extends Controller
         //set validation
         $validator = Validator::make($request->all(), [
             'email'     => 'required|email',
-            'password'  => 'required'
+            'password'  => 'required|min:8'
         ]);
 
         //if validation fails

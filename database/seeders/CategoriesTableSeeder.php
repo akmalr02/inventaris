@@ -15,20 +15,20 @@ class CategoriesTableSeeder extends Seeder
     {
         DB::table('categories')->insert([
             // Jenis Kertas untuk Perkantoran
-            ['name_categories' => 'Kertas HVS', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categories' => 'Kertas Art Paper', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categories' => 'Kertas Glossy', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categories' => 'Kertas Matt', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Kertas HVS', 'description' => 'Kertas HVS untuk keperluan kantor', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Kertas Art Paper', 'description' => 'Kertas Art Paper yang biasa digunakan untuk desain', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Kertas Glossy', 'description' => 'Kertas dengan permukaan glossy untuk mencetak gambar', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Kertas Matt', 'description' => 'Kertas dengan permukaan matt tanpa kilap', 'created_at' => now(), 'updated_at' => now()],
 
             // Alat Tulis
-            ['name_categories' => 'Pensil', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categories' => 'Pulpen', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categories' => 'Penghapus', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categories' => 'Tip-X', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Pensil', 'description' => 'Pensil untuk menulis dan menggambar', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Pulpen', 'description' => 'Pulpen untuk menulis di atas kertas', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Penghapus', 'description' => 'Penghapus untuk menghapus tulisan pensil', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Tip-X', 'description' => 'Tip-X untuk mengoreksi kesalahan tulisan', 'created_at' => now(), 'updated_at' => now()],
 
             // Komputer dan Printer
-            ['name_categories' => 'Komputer', 'created_at' => now(), 'updated_at' => now()],
-            ['name_categories' => 'Printer', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Komputer', 'description' => 'Komputer untuk keperluan perkantoran', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Printer', 'description' => 'Printer untuk mencetak dokumen dan gambar', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

@@ -9,15 +9,29 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 
 use App\Models\User;
-use Illuminate\Auth\Events\Validated;
 
-use function Laravel\Prompts\password;
 
 class AdminController extends Controller
 {
     public function index()
     {
         return User::all();
+
+        // Ambil query pencarian dari request
+        $search = $request->input('search');
+
+        // Lakukan query untuk mendapatkan daftar user
+        $users = User::query()
+            ->when($search, function ($query) use ($search) {
+                // Filter berdasarkan name, email, atau role
+                return $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('role', 'like', "%{$search}%");
+            })
+            ->get();
+
+        // Return data ke frontend
+        return response()->json($users);
     }
 
     public function store(Request $request)
@@ -51,34 +65,34 @@ class AdminController extends Controller
 
     public function update(Request $request, String $id)
     {
-
-        // $rules = [
-        //     'name' => 'required|unique:users,name,' . $user->id,
-        //     'email' => 'required|email',
-        //     'password' => 'nullable|min:8',
-        //     'role' => ['required', Rule::in(['admin', 'pengelola', 'pemakai'])],
-        // ];
-
-        // $data = $request->validate($rules);
-
-        // if (isset($data['password']) && $data['password'] !== null) {
-        //     $data['password'] = Hash::make($data['password']);
-        // }
-
-        // $user->update($data);
-        // return response()->json($user, 200);
         $user = User::find($id);
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
         $rules = [
-            'name' => 'required|unique:users',
+            'name' => 'required|max:225',
             'email' => 'required|email',
             'password' => 'nullable|min:8',
             'role' => ['required', Rule::in(['admin', 'pengelola', 'pemakai'])],
             'phone' => "required|min:11|max:13",
+            // 'image' => 'nullable|array',
+            // 'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
 
         ];
+
+        // if ($request->hasFile('image')) {
+        //     try {
+        //         $images = [];
+        //         foreach ($request->file('image') as $file) {
+        //             $path = $file->store('users', 'public');
+        //             $images[] = $path;
+        //         }
+        //         $data['image'] = json_encode($images);
+        //     } catch (\Exception $e) {
+        //         return response()->json(['message' => 'Failed to upload image', 'error' => $e->getMessage()], 500);
+        //     }
+        // }
+
         // var_dump($rules);
         // dd($rules);
         // log::info('Data yang diterima:', $rules);
@@ -87,7 +101,7 @@ class AdminController extends Controller
         if (isset($data['password']) && $data['password'] !== null) {
             $data['password'] = Hash::make($data['password']);
         } else {
-            unset($data['password']); // Jangan update password jika tidak diubah
+            unset($data['password']);
         }
 
         $user->update($data);

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Barang;
 use Illuminate\Http\Request;
 use App\Models\PesananBarang;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class LaporanPesananBarangController extends Controller
@@ -20,7 +20,7 @@ class LaporanPesananBarangController extends Controller
     {
         $data = $request->validate([
             'barang_id' => 'required|exists:barangs,id',
-            'description' => 'required|string',
+            'description' => 'required|string|max:255',
             'tanggal' => 'required|date',
             'jumlah_pesanan' => 'required|integer',
         ]);
@@ -29,6 +29,25 @@ class LaporanPesananBarangController extends Controller
         if (!$user) {
             return response()->json(['message' => 'User tidak ditemukan'], 401);
         }
+
+        // Mendapatkan pengguna yang sedang login
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'User tidak ditemukan'], 401);
+        }
+
+        // Mencari barang berdasarkan barang_id
+        $barang = Barang::find($data['barang_id']);
+
+        // Mengecek apakah stok barang mencukupi
+        if ($barang->jumlah < $data['jumlah_pesanan']) {
+            return response()->json(['message' => 'Stok barang tidak mencukupi'], 400);
+        }
+
+        // Kurangi jumlah barang
+        $barang->jumlah -= $data['jumlah_pesanan'];
+        $barang->save();  // Simpan perubahan stok barang
+
 
         $data['user_id'] = $user->id;
         $pesananBarang = PesananBarang::create($data);

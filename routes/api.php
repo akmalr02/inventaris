@@ -19,10 +19,11 @@ Route::get('/user', function (Request $request) {
 
 Route::post('login', LoginController::class)->name('login');
 Route::post('logout', LogoutController::class)->name('logout');
-Route::post('coba', CobaController::class)->name('coba');
 
 Route::apiResource('category', CategoriesController::class)->middleware('auth:api');
 Route::apiResource('barang', BarangController::class)->middleware('auth:api');
+Route::post('/barangKosong/{id}/tambahBarang', [BarangController::class, 'tambahBarang'])->middleware('auth:api');
+
 
 Route::apiResource('admin', AdminController::class)->middleware('auth:api');
 

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Barang;
 use App\Models\LaporanBarangKosong;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 
 class LaporanBarangKosongController extends Controller
 {
@@ -20,7 +20,7 @@ class LaporanBarangKosongController extends Controller
     {
         $data = $request->validate([
             'barang_id' => 'required',
-            'description' => 'required',
+            'description' => 'required|max:255',
             'tanggal' => 'required',
 
         ]);
@@ -32,7 +32,16 @@ class LaporanBarangKosongController extends Controller
             return response()->json(['message' => 'User tidak ditemukan'], 401);
         }
 
+        // Buat laporan barang kosong
         $barangKosong = LaporanBarangKosong::create($data);
+
+        // Setelah berhasil membuat laporan barang kosong, ubah jumlah barang menjadi 0
+        $barang = Barang::find($data['barang_id']);
+        if ($barang) {
+            $barang->jumlah = 0;
+            $barang->save();
+        }
+
         return response()->json($barangKosong, 200);
     }
 
@@ -57,8 +66,8 @@ class LaporanBarangKosongController extends Controller
         }
         $ruls = [
             'barang_id' => 'required',
-            'description' => 'required',
-            'tanggal' => 'required',
+            'description' => 'required|max:255',
+            'tanggal' => 'required|date',
         ];
         $data = $request->validate($ruls);
 
