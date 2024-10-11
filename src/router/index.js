@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "@/view/login.vue";
-import coba from "@/view/coba.vue";
+// import coba from "@/view/coba.vue";
 
 // Dashboard
 import admin from "@/view/admin/home.vue";
@@ -15,14 +15,12 @@ import tambahUser from "@/view/admin/tambahUser.vue";
 import laporan from "@/view/admin/laporan.vue";
 
 // laporoan barang kosong
-
 import barangKosong from "@/view/laporan/barang_kosong/barangKosong.vue";
 import tambahBarangKosong from "@/view/laporan/barang_kosong/tambah.vue";
 import editBarangKosong from "@/view/laporan/barang_kosong/edit.vue";
 import viewBarangKosong from "@/view/laporan/barang_kosong/view.vue";
 
 // laporoan barang rusak
-
 import barangRusak from "@/view/laporan/barang_rusak/barangRusak.vue";
 import tambahBarangRusak from "@/view/laporan/barang_rusak/tambah.vue";
 import editBarangRusak from "@/view/laporan/barang_rusak/edit.vue";
@@ -40,19 +38,22 @@ import tambahBarang from "@/view/barang/tambah.vue";
 import editBarang from "@/view/barang/edit.vue";
 import viewBarang from "@/view/barang/view.vue";
 
+//categories
+import categories from "@/view/categories/category.vue";
+import tambahCategories from "@/view/categories/tambah.vue";
+
 const routes = [
   { path: "/login", name: "login", component: Login },
-  { path: "/coba", name: "coba", component: coba },
 
   // Dashboard
   { path: "/", name: "dashboard", component: Dashboard },
   { path: "/home", name: "homeAdmin", component: admin },
 
-  // akses admin user
+  // akses admin
   { path: "/dataUser", name: "dataUser", component: dataUser },
-  { path: "/laporan", name: "laporan", component: laporan },
   { path: "/editUser/:id", name: "editUser", component: editUser },
   { path: "/tambahUser", name: "tambahUser", component: tambahUser },
+  { path: "/laporan", name: "laporan", component: laporan },
 
   // laporan barang rusak
   { path: "/barangRusak", name: "barangRusak", component: barangRusak },
@@ -69,7 +70,6 @@ const routes = [
   { path: "/viewR/:id", name: "viewBarangKosong", component: viewBarangKosong },
 
   // laporan barang kosong
-
   { path: "/barangKosong", name: "barangKosong", component: barangKosong },
   {
     path: "/tambahK/:id",
@@ -84,7 +84,6 @@ const routes = [
   { path: "/viewK/:id", name: "viewBarangRusak", component: viewBarangRusak },
 
   // laporan pesanan barang
-
   { path: "/pesananBarang", name: "pesananBarang", component: pesananBarang },
   {
     path: "/tambahPesananBarang",
@@ -111,6 +110,14 @@ const routes = [
     component: editBarang,
   },
   { path: "/viewB/:id", name: "viewBarang", component: viewBarang },
+
+  //categories
+  { path: "/categories", name: "categories", component: categories },
+  {
+    path: "/tambahCategories",
+    name: "tambahCategories",
+    component: tambahCategories,
+  },
 ];
 
 const router = createRouter({

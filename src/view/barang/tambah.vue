@@ -46,7 +46,7 @@
             >
               <option value="" disabled>Pilih Barang</option>
               <option v-for="c in categories" :key="c.id" :value="c.id">
-                {{ c.name_categories }}
+                {{ c.name }}
               </option>
             </select>
           </div>
@@ -54,14 +54,14 @@
           <!-- Upload Gambar -->
           <div class="form-control">
             <label class="label">
-              <span class="label-text">Images</span>
+              <span class="label-text">Images Barang</span>
             </label>
             <input
               ref="imageInput"
               type="file"
               @change="handleImageUpload"
               multiple
-              class="mb-2"
+              class="file-input file-input-bordered w-full max-w-xs mb-2"
             />
             <ul class="mt-3">
               <li v-for="(image, index) in images" :key="index" class="mb-2">

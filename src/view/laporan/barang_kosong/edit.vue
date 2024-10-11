@@ -3,47 +3,13 @@
     <div class="card bg-base-300 w-96 shadow-xl">
       <div class="card-body">
         <h2 class="flex justify-center card-title text-center">
-          Edit Laporan Barang Kosong
+          Tambah persediaan
         </h2>
-        <form
-          class="card-body pt-3"
-          @submit.prevent="updateLaporanBarangKosong"
-        >
-          <!-- Bagian untuk memilih Barang -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Pilih Barang</span>
-            </label>
-            <select v-model="barang_id" class="select select-bordered" required>
-              <option value="" disabled>Pilih Barang</option>
-              <option
-                v-for="barang in barangs"
-                :key="barang.id"
-                :value="barang.name"
-              >
-                {{ barang.name }}
-              </option>
-            </select>
-            <div v-if="errors.barang_id" class="error-message">
-              <span>{{ errors.barang_id[0] }}</span>
-            </div>
-          </div>
-
-          <!-- Bagian untuk memasukkan Deskripsi -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Deskripsi</span>
-            </label>
-            <textarea
-              v-model="description"
-              placeholder="Deskripsi"
-              class="textarea textarea-bordered"
-              required
-            ></textarea>
-            <div v-if="errors.description" class="error-message">
-              <span>{{ errors.description[0] }}</span>
-            </div>
-          </div>
+        <form class="card-body pt-3" @submit.prevent="tambahBarang">
+          <!-- Bagian Nama Barang -->
+          <h3 class="text-lg font-bold">
+            {{ laporan?.barang?.name ?? "Barang tidak tersedia!!!" }}
+          </h3>
 
           <!-- Bagian untuk memilih Tanggal -->
           <div class="form-control">
@@ -56,9 +22,22 @@
               class="input input-bordered"
               required
             />
-            <div v-if="errors.tanggal" class="error-message">
-              <span>{{ errors.tanggal[0] }}</span>
-            </div>
+          </div>
+
+          <!-- Input Jumlah Barang -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Jumlah Barang </span>
+            </label>
+            <input
+              v-model="jumlah"
+              type="text"
+              inputmode="numeric"
+              placeholder="Jumlah"
+              class="input input-bordered"
+              min="1"
+              required
+            />
           </div>
 
           <!-- Tombol Submit -->
@@ -76,79 +55,50 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+<script>
 import apiClient from "@/service/inventaris";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 
-const route = useRoute();
-const router = useRouter();
-const barang_id = ref(null);
-const description = ref("");
-const tanggal = ref("");
-const barangs = ref([]);
-const errors = ref({});
-
-const getBarangs = async () => {
-  try {
-    const response = await apiClient.get("/barang");
-    barangs.value = response.data;
-  } catch (error) {
-    toast.error("Gagal mengambil data barang.", { autoClose: 3000 });
-  }
-};
-
-onMounted(async () => {
-  await getBarangs();
-  try {
-    const response = await apiClient.get(`/barangKosong/${route.params.id}`);
-    const laporan = response.data;
-    console.log(laporan);
-    barang_id.value = laporan.barang_id;
-    description.value = laporan.description;
-    tanggal.value = laporan.tanggal;
-  } catch (error) {
-    toast.error("Gagal mengambil data laporan.", { autoClose: 3000 });
-  }
-});
-
-const updateLaporanBarangKosong = async () => {
-  try {
-    let formData = {
-      barang_id: barang_id.value,
-      description: description.value,
-      tanggal: tanggal.value,
-      _method: "PATCH",
+export default {
+  data() {
+    return {
+      laporan: [],
+      jumlah: "",
+      tanggal: "",
     };
+  },
+  created() {
+    this.getLaporan();
+  },
+  methods: {
+    async getLaporan() {
+      const response = await apiClient.get(
+        `/barangKosong/${this.$route.params.id}`
+      );
+      this.laporan = response.data;
+      this.tanggal = new Date().toISOString().split("T")[0];
+      // console.log(this.laporan);
+    },
 
-    await apiClient.post(`/barangKosong/${route.params.id}`, formData);
-    router
-      .push({
-        name: "barangKosong",
-        state: { successMessage: "Data laporan berhasil diperbarui!" },
-      })
-      .catch((error) => {
-        if (error.response && error.response.data.errors) {
-          errors.value = error.response.data.errors;
-          toast.error("Gagal memperbarui data laporan.", { autoClose: 3000 });
-        } else {
-          toast.error("Terjadi kesalahan saat memperbarui data.", {
-            autoClose: 3000,
-          });
+    async tambahBarang() {
+      try {
+        const data = {
+          jumlah: this.jumlah,
+          tanggal: this.tanggal,
+        };
+        const response = await apiClient.post(
+          `/barangKosong/${this.$route.params.id}/tambahBarang`,
+          data
+        );
+        if (response.status === 200) {
+          toast.success("Jumlah barang berhasil ditambahkan.");
         }
-      });
-  } catch (error) {
-    toast.error("Terjadi kesalahan saat memperbarui data.", {
-      autoClose: 3000,
-    });
-  }
-};
-
-const resetForm = () => {
-  barang_id.value = "";
-  description.value = "";
-  tanggal.value = "";
+      } catch (error) {
+        console.error(error);
+        toast.error("Gagal menambahkan jumlah barang.");
+      }
+    },
+  },
 };
 </script>

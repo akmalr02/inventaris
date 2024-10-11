@@ -18,52 +18,117 @@
   gap: 10px;
 }
 </style>
+
 <template>
   <div class="home">
     <div class="container">
       <div class="box">
-        <div
-          class="max-w-md mx-auto bg-slate-200 rounded-xl shadow-md overflow-hidden md:max-w-2xl p-4"
-        >
-          <apexchart
-            width="100%"
-            height="500" 
-            type="bar"
-            :options="pesananOptions"
-            :series="pesananSeries"
-            v-if="pesanan.length > 0"
-          />
-          <p v-else>
-            <p>
-              Loading...
-            </p>
-            <span class="loading loading-bars loading-md"></span>
-          </p>
-        </div>
-
+        <!-- Stok Barang -->
         <div
           class="max-w-md mx-auto bg-slate-200 rounded-xl shadow-md overflow-hidden md:max-w-2xl p-4"
         >
           <div class="md:flex">
             <apexchart
-              width="100%"
+              width="600"
               height="500"
+              type="pie"
               :options="barangsOptions"
               :series="barangsSeries"
-              v-if="barangs.length > 0"
-            />
-            <p v-else>
-              <p>
-                Loading...
-              </p>
+              v-if="barangs.length > 0 && !isLoading"
+            ></apexchart>
+
+            <div v-else-if="isLoading" class="text-center w-full">
+              <p>Loading...</p>
               <span class="loading loading-bars loading-md"></span>
-            </p>
+            </div>
+
+            <table v-else class="table-auto w-full text-left border">
+              <thead>
+                <tr>
+                  <th class="px-4 py-2 border text-center">Stok Barang</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="px-4 py-2 border text-center" colspan="2">
+                    Stok Barang Kosong!!!
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+        </div>
+
+        <!-- Pemakaian Barang -->
+        <div
+          class="max-w-md mx-auto bg-slate-200 rounded-xl shadow-md overflow-hidden md:max-w-2xl p-4 m-5"
+        >
+          <apexchart
+            width="600"
+            height="500"
+            type="bar"
+            :options="pesananOptions"
+            :series="pesananSeries"
+            v-if="pesanan.length > 0 && !isLoading"
+          ></apexchart>
+
+          <div v-else-if="isLoading" class="text-center w-full">
+            <p>Loading...</p>
+            <span class="loading loading-bars loading-md"></span>
+          </div>
+
+          <table v-else class="table-auto w-full text-left border">
+            <thead>
+              <tr>
+                <th class="px-4 py-2 border text-center">Pemakaian Barang</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="px-4 py-2 border text-center" colspan="2">
+                  Tidak Ada Pemakaian Barang!!!
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Barang Rusak -->
+        <div
+          class="max-w-md bg-slate-200 rounded-xl shadow-md overflow-hidden md:max-w-2xl p-4 m-5"
+        >
+          <apexchart
+            width="600"
+            height="500"
+            type="bar"
+            :options="rusakOptions"
+            :series="rusakSeries"
+            v-if="rusak.length > 0 && !isLoading"
+          ></apexchart>
+
+          <div v-else-if="isLoading" class="text-center w-full">
+            <p>Loading...</p>
+            <span class="loading loading-bars loading-md"></span>
+          </div>
+
+          <table v-else class="table-auto w-full text-left border">
+            <thead>
+              <tr>
+                <th class="px-4 py-2 border text-center">Barang Rusak</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="px-4 py-2 border text-center" colspan="2">
+                  Tidak Ada Barang Rusak!!!
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
-
   <footer
     class="footer footer-center bg-base-300 text-base-content rounded p-10"
   >
@@ -135,9 +200,45 @@ export default {
   },
   data() {
     return {
+      isLoading: true,
       barangs: [],
       pesanan: [],
+      rusak: [],
       barangsOptions: {
+        chart: {
+          type: "pie",
+          width: 380,
+        },
+        labels: [],
+        title: {
+          text: "Stok Barang",
+          align: "center",
+        },
+      },
+      barangsSeries: [],
+      pesananOptions: {
+        chart: {
+          type: "bar",
+          height: 300,
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 10,
+            distributed: true,
+          },
+        },
+        colors: ["#33b2df", "#546E7A", "#d4526e", "#13d8aa"],
+        xaxis: {
+          categories: [],
+        },
+        title: {
+          text: "Data Pemakaian Barang",
+          align: "center",
+        },
+      },
+      // pesanan
+      pesananSeries: [{ name: "Jumlah Pesanan", data: [] }],
+      rusakOptions: {
         chart: {
           type: "bar",
           height: 350,
@@ -166,173 +267,51 @@ export default {
         ],
         dataLabels: {
           enabled: true,
-          textAnchor: "start",
           style: {
             colors: ["#fff"],
           },
-          formatter: function (val, opt) {
-            return opt.w.globals.labels[opt.dataPointIndex] + ": " + val;
-          },
-          offsetX: 0,
-          dropShadow: {
-            enabled: true,
-          },
         },
         stroke: {
           width: 1,
           colors: ["#fff"],
         },
         xaxis: {
-          categories: [], // Akan diisi oleh data
-        },
-        yaxis: {
-          labels: {
-            show: false,
-          },
+          categories: [],
         },
         title: {
-          text: "Stok Barang",
+          text: "Barang Rusak",
           align: "center",
-          floating: false, 
-          offsetY: 10,
-        },
-        subtitle: {
-          text: "Jumlah Barang yang tersedia",
-          align: "center",
-          floating: false, 
-
-        },
-        tooltip: {
-          theme: "dark",
-          x: {
-            show: false,
-          },
-          y: {
-            title: {
-              formatter: function () {
-                return "";
-              },
-            },
-          },
         },
       },
-      pesananOptions: {
-        chart: {
-          type: "bar",
-          height: 300,
-        },
-        plotOptions: {
-          bar: {
-            borderRadius: 10,
-            barHeight: "100%",
-            distributed: true,
-            dataLabels: {
-              position: "top", // top, center, bottom
-            },
-          },
-        },
-        colors: [
-          "#33b2df",
-          "#546E7A",
-          "#d4526e",
-          "#13d8aa",
-          "#A5978B",
-          "#2b908f",
-          "#f9a3a4",
-          "#90ee7e",
-          "#f48024",
-          "#69d2e7",
-        ],
-        dataLabels: {
-          enabled: true,
-          formatter: function (val) {
-            return val + "%";
-          },
-          offsetY: -20,
-          style: {
-            fontSize: "12px",
-            colors: ["#304758"],
-          },
-
-          formatter: function (val, opt) {
-            return opt.w.globals.labels[opt.dataPointIndex] + ": " + val;
-          },
-          offsetX: 0,
-          dropShadow: {
-            enabled: true,
-          },
-        },
-        stroke: {
-          width: 1,
-          colors: ["#fff"],
-        },
-        xaxis: {
-          categories: [], // Akan diisi oleh data
-        },
-        yaxis: {
-          labels: {
-            show: false,
-          },
-        },
-        title: {
-          text: "Data pemakaian barang",
-          align: "center",
-          floating: false, 
-          offsetY: 10,
-        },
-        subtitle: {
-          text: "Jumlah pemakaian per Barang",
-          align: "center",
-          floating: false, 
-
-        },
-        tooltip: {
-          theme: "dark",
-          x: {
-            show: false,
-          },
-          y: {
-            title: {
-              formatter: function () {
-                return "";
-              },
-            },
-          },
-        },
-      },
-      barangsSeries: [
-        {
-          name: "Jumlah Barang",
-          data: [], // Jumlah barang untuk setiap barang
-        },
-      ],
-      pesananSeries: [
-        {
-          name: "Jumlah Pesanan",
-          data: [], // Jumlah pesanan untuk setiap barang
-        },
-      ],
+      rusakSeries: [{ name: "Jumlah Barang Rusak", data: [] }],
     };
   },
   created() {
-    this.getBarangs();
-    this.getPesanan();
+    this.getData();
   },
   methods: {
+    async getData() {
+      await Promise.all([
+        this.getBarangs(),
+        this.getPesanan(),
+        this.getRusak(),
+      ]);
+      this.isLoading = false;
+    },
     async getBarangs() {
       try {
         const response = await apiClient.get("/barang");
         this.barangs = response.data;
 
-        // Proses data untuk ApexCharts
-        const categories = this.barangs.map(
-          (barang) => barang.name ?? "Tanpa Nama"
-        );
-        const seriesData = this.barangs.map((barang) => barang.jumlah ?? 0);
+        if (this.barangs.length > 0) {
+          const labels = this.barangs.map(
+            (barang) => barang.name || "Tanpa Nama"
+          );
+          const seriesData = this.barangs.map((barang) => barang.jumlah || 0);
 
-        // Update chart options dan series
-        this.barangsOptions.xaxis.categories = categories;
-        this.barangsSeries[0].data = seriesData;
+          this.barangsOptions.labels = labels;
+          this.barangsSeries = seriesData;
+        }
       } catch (error) {
         console.error("Gagal mengambil data barang.", error);
       }
@@ -342,19 +321,37 @@ export default {
         const response = await apiClient.get("/pesanan");
         this.pesanan = response.data;
 
-        // Proses data untuk ApexCharts
-        const categories = this.pesanan.map(
-          (pesan) => pesan.barang?.name ?? "Tanpa Nama"
-        );
-        const seriesData = this.pesanan.map(
-          (pesan) => pesan.jumlah_pesanan ?? 0
-        );
+        if (this.pesanan.length > 0) {
+          const categories = this.pesanan.map(
+            (pesan) => pesan.barang?.name || "Tanpa Nama"
+          );
+          const seriesData = this.pesanan.map(
+            (pesan) => pesan.jumlah_pesanan || 0
+          );
 
-        // Update chart options dan series
-        this.pesananOptions.xaxis.categories = categories;
-        this.pesananSeries[0].data = seriesData;
+          this.pesananOptions.xaxis.categories = categories;
+          this.pesananSeries[0].data = seriesData;
+        }
       } catch (error) {
         console.error("Gagal mengambil data pesanan.", error);
+      }
+    },
+    async getRusak() {
+      try {
+        const response = await apiClient.get("/barangRusak");
+        this.rusak = response.data;
+
+        if (this.rusak.length > 0) {
+          const categories = this.rusak.map(
+            (rusak) => rusak.barang?.name || "Tanpa Nama"
+          );
+          const seriesData = this.rusak.map((rusak) => rusak.jumlah_rusak || 0);
+
+          this.rusakOptions.xaxis.categories = categories;
+          this.rusakSeries[0].data = seriesData;
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data barang rusak.", error);
       }
     },
   },

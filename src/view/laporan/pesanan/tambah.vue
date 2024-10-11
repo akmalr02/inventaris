@@ -122,6 +122,13 @@ export default {
 
     const submitForm = async () => {
       try {
+        if (jumlah_pesanan.value <= 0) {
+          toast.error("Jumlah pesanan harus lebih dari 0!", {
+            autoClose: 3000,
+          });
+          return;
+        }
+
         const data = {
           barang_id: barang_id.value,
           description: description.value,

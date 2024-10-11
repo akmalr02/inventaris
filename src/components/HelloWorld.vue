@@ -53,41 +53,58 @@
           Buat Laporan Barang Kosong
         </h2>
         <!-- <form @submit.prevent="createLaporan" class="card-body pt-3"> -->
-          <!-- Bagian input Barang -->
-          <!-- <h3 class="text-lg font-bold">{{ selectedBarang.name }}</h3> -->
+        <!-- Bagian input Barang -->
+        <!-- <h3 class="text-lg font-bold">{{ selectedBarang.name }}</h3> -->
 
-          <!-- Bagian untuk memasukkan Deskripsi -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Deskripsi</span>
-            </label>
-            <textarea
-              placeholder="Deskripsi"
-              class="textarea textarea-bordered"
-              required
-            ></textarea>
-            <!-- <div v-if="errors.description" class="error-message">
+        <!-- bagian memilih barang -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Pilih Barang</span>
+          </label>
+          <select v-model="barang_id" class="select select-bordered" required>
+            <option value="" disabled>Pilih Barang</option>
+            <option
+              v-for="barang in barangs"
+              :key="barang.id"
+              :value="barang.name"
+            >
+              {{ barang.name }}
+            </option>
+          </select>
+          <div v-if="errors.barang_id" class="error-message">
+            <span>{{ errors.barang_id[0] }}</span>
+          </div>
+        </div>
+        <!-- Bagian untuk memasukkan Deskripsi -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Deskripsi</span>
+          </label>
+          <textarea
+            placeholder="Deskripsi"
+            class="textarea textarea-bordered"
+            required
+          ></textarea>
+          <!-- <div v-if="errors.description" class="error-message">
                 <span>{{ errors.description[0] }}</span>
               </div> -->
-          </div>
+        </div>
 
-          <!-- Bagian untuk memilih Tanggal -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Tanggal</span>
-            </label>
-            <input type="date" class="input input-bordered" required />
-            <!-- <div v-if="errors.tanggal" class="error-message">
+        <!-- Bagian untuk memilih Tanggal -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Tanggal</span>
+          </label>
+          <input type="date" class="input input-bordered" required />
+          <!-- <div v-if="errors.tanggal" class="error-message">
                 <span>{{ errors.tanggal[0] }}</span>
               </div> -->
-          </div>
+        </div>
 
-          <!-- Tombol Submit -->
-          <div class="form-control mt-2">
-            <button class="btn btn-primary p-3 mb-2" type="submit">
-              Submit
-            </button>
-          </div>
+        <!-- Tombol Submit -->
+        <div class="form-control mt-2">
+          <button class="btn btn-primary p-3 mb-2" type="submit">Submit</button>
+        </div>
         <!-- </form> -->
         <div class="modal-action">
           <button class="btn" @click="closeModal">Tutup</button>

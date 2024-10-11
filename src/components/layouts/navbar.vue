@@ -74,12 +74,23 @@
 
             <li class="mb-1">
               <router-link
+                to="/categories"
+                class="text-lg transition-colors mx-2 p-2"
+                active-class="bg-white text-black rounded-lg"
+                ><BookOpenIcon class="size-6" />Category Barang
+              </router-link>
+            </li>
+            <hr class="border-t border-gray-500 p-1" />
+
+            <li class="mb-1">
+              <router-link
                 to="/laporan"
                 class="text-lg transition-colors mx-2 p-2"
                 active-class="bg-white text-black rounded-lg"
                 ><DocumentTextIcon class="size-6" />Laporan
               </router-link>
             </li>
+            <hr class="border-t border-gray-500 p-1" />
 
             <!-- Dropdown tombol untuk memilih laporan -->
             <div class="text-lg transition-colors mx-2 p-2 dropdown m-3">
@@ -159,9 +170,10 @@ import {
   HomeIcon,
   FolderOpenIcon,
   BriefcaseIcon,
+  BookOpenIcon,
 } from "@heroicons/vue/24/solid";
-import jwt_decode from "jwt-decode"; // Pastikan menggunakan cara ini
-import apiClient from "@/service/inventaris"; // Mengimpor apiClient Anda
+import jwt_decode from "jwt-decode";
+import apiClient from "@/service/inventaris";
 
 export default {
   components: {
@@ -170,6 +182,7 @@ export default {
     HomeIcon,
     FolderOpenIcon,
     BriefcaseIcon,
+    BookOpenIcon,
   },
   data() {
     return {

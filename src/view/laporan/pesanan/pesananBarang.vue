@@ -21,13 +21,6 @@
 <template>
   <div class="overflow-x-auto m-9">
     <div class="px-4">
-      <router-link to="/laporan" class="btn btn-outline btn-primary">
-        <BackspaceIcon class="size-6 text-error-200-500" />
-        Back</router-link
-      >
-      <router-link to="/tambahPesananBarang" class="btn btn-primary mb-3 ml-5">
-        <PlusCircleIcon class="size-6 text-error-200-500" />Buat Laporan
-      </router-link>
       <div class="header">
         <p class="font-bold">Pesanan Barang</p>
       </div>

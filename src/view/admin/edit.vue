@@ -148,12 +148,10 @@ const updateUser = async () => {
     formData.append("role", role.value);
     formData.append("phone", phone.value);
     formData.append("_method", "PATCH");
-    console.log(role.value);
     await apiClient
       .post(`/admin/${route.params.id}`, formData)
       .then(() => {
         toast.success("Data user berhasil diperbarui!", { autoClose: 3000 });
-        router.push({ name: "dataUser" });
       })
       .catch((error) => {
         // console.log("Error response:", error.response.data);

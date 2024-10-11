@@ -61,7 +61,7 @@
             >
               <option value="" disabled>Pilih Barang</option>
               <option v-for="c in categories" :key="c.id" :value="c.id">
-                {{ c.name_categories }}
+                {{ c.name }}
               </option>
             </select>
           </div>
@@ -89,7 +89,7 @@
               type="file"
               @change="handleImageUpload"
               multiple
-              class="mb-2"
+              class="file-input file-input-bordered w-full max-w-xs mb-2"
             />
             <ul class="mt-3">
               <li v-for="(image, index) in newImages" :key="index" class="mb-2">
@@ -169,7 +169,6 @@ export default {
         const response = await apiClient.get(`/barang/${route.params.id}`);
         const barang = response.data;
         name.value = barang.name;
-        console.log(barang);
         description.value = barang.description;
         categories_id.value = barang.categories_id;
         images.value = JSON.parse(barang.image);
@@ -192,15 +191,13 @@ export default {
       newImages.value = [...newImages.value, ...validFiles];
     };
 
-    // Fungsi untuk menghapus gambar baru yang di-upload
     const removeNewImage = (index) => {
       newImages.value.splice(index, 1);
     };
 
-    // Fungsi untuk menandai gambar yang ingin dihapus
     const removeExistingImage = (index) => {
       const removedImage = images.value.splice(index, 1)[0];
-      imagesToRemove.value.push(removedImage); // Masukkan ke daftar yang akan dihapus saat update
+      imagesToRemove.value.push(removedImage);
     };
 
     const update = async () => {
@@ -211,12 +208,10 @@ export default {
         formData.append("categories_id", categories_id.value);
         formData.append("jumlah", jumlah.value);
 
-        // Kirim gambar baru yang tersisa setelah yang dihapus di newImages
         newImages.value.forEach((image) => {
           formData.append("image[]", image);
         });
 
-        // Tambahkan gambar yang dihapus untuk dihapus dari backend
         if (imagesToRemove.value.length > 0) {
           formData.append(
             "imagesToRemove",

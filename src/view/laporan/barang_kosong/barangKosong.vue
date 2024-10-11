@@ -21,11 +21,6 @@
 <template>
   <div class="overflow-x-auto m-9">
     <div class="px-4">
-      <router-link to="/laporan" class="btn btn-outline btn-primary">
-        <BackspaceIcon class="size-6 text-error-200-500" />
-        Back</router-link
-      >
-
       <div class="header">
         <p class="font-bold">Laporan barang Kosong</p>
       </div>
@@ -64,10 +59,9 @@
           <td>
             <router-link
               :to="{ name: 'editBarangKosong', params: { id: laporan.id } }"
-              class="btn btn-outline btn-warning mbs-2"
-              ><PencilIcon
-                class="size-6 text-yellow-200-500"
-              />edit</router-link
+              class="btn btn-primary mb-2"
+              ><PencilIcon class="size-6 text-error-200-500" />Tambah
+              persediaan</router-link
             >
             <form @submit.prevent="confirmDelete(laporan.id)">
               <button type="submit" class="btn btn-outline btn-error mt-3">
