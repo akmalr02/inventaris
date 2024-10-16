@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\CobaController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\BarangController;
