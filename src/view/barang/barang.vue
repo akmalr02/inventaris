@@ -72,56 +72,58 @@
               <EyeIcon class="size-6 text-blue-100-300" /> View
             </router-link>
             <router-link
+              v-if="userRole === 'admin' || userRole === 'pengelola'"
               :to="{ name: 'editBarang', params: { id: barang.id } }"
               class="btn btn-outline btn-warning mbs-2 mr-2 mb-2"
             >
               <PencilIcon class="size-6 text-yellow-200-500" /> Edit
             </router-link>
-
-            <!-- Dropdown tombol untuk memilih laporan -->
-            <div class="relative inline-block">
-              <button
-                class="text-lg px-2 btn btn-primary bg-blue-500 text-white menu-dropdown-show"
-                @click="toggleDropdown(barang.id)"
-              >
-                <FolderOpenIcon class="size-6" />
-                Pilih Laporan
-              </button>
-              <ul
-                v-if="dropdowns[barang.id]"
-                class="absolute mt-2 p-2 shadow-lg rounded-lg w-52 bg-white"
-              >
-                <li class="mx-2 py-2">
-                  <button
-                    class="w-full flex items-center"
-                    @click="openModal1(barang)"
-                  >
-                    <PlusCircleIcon class="w-6 h-6 mr-2 text-blue-500" /> Barang
-                    Kosong
-                  </button>
-                </li>
-                <li class="mx-2 py-2">
-                  <button
-                    class="w-full flex items-center"
-                    @click="openModal2(barang)"
-                  >
-                    <PlusCircleIcon class="w-6 h-6 mr-2 text-blue-500" /> Barang
-                    Rusak
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Bagian delet -->
-            <div
-              v-if="!isDeleting[barang.id]"
-              :class="{ 'fade-out': isFading[barang.id] }"
-            >
-              <form @submit.prevent="confirmDelete(barang.id, $event.target)">
-                <button type="submit" class="btn btn-outline btn-error my-3">
-                  <TrashIcon class="size-6 text-error-200-500" /> Delete
+            <div v-if="userRole === 'admin' || userRole === 'pengelola'">
+              <!-- Dropdown tombol untuk memilih laporan -->
+              <div class="relative inline-block">
+                <button
+                  class="text-lg px-2 btn btn-primary bg-blue-500 text-white menu-dropdown-show"
+                  @click="toggleDropdown(barang.id)"
+                >
+                  <FolderOpenIcon class="size-6" />
+                  Pilih Laporan
                 </button>
-              </form>
+                <ul
+                  v-if="dropdowns[barang.id]"
+                  class="absolute mt-2 p-2 shadow-lg rounded-lg w-52 bg-white"
+                >
+                  <li class="mx-2 py-2">
+                    <button
+                      class="w-full flex items-center"
+                      @click="openModal1(barang)"
+                    >
+                      <PlusCircleIcon class="w-6 h-6 mr-2 text-blue-500" />
+                      Barang Kosong
+                    </button>
+                  </li>
+                  <li class="mx-2 py-2">
+                    <button
+                      class="w-full flex items-center"
+                      @click="openModal2(barang)"
+                    >
+                      <PlusCircleIcon class="w-6 h-6 mr-2 text-blue-500" />
+                      Barang Rusak
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Bagian delet -->
+              <div
+                v-if="!isDeleting[barang.id]"
+                :class="{ 'fade-out': isFading[barang.id] }"
+              >
+                <form @submit.prevent="confirmDelete(barang.id, $event.target)">
+                  <button type="submit" class="btn btn-outline btn-error my-3">
+                    <TrashIcon class="size-6 text-error-200-500" /> Delete
+                  </button>
+                </form>
+              </div>
             </div>
           </td>
         </tr>
@@ -320,6 +322,7 @@ import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import apiClient from "@/service/inventaris";
 import { useRouter } from "vue-router";
+// import { useAuthStore } from "@/stores/authStore";
 import {
   TrashIcon,
   PencilIcon,
@@ -355,6 +358,7 @@ export default {
     const router = useRouter();
     const isFading = ref({});
     const isDeleting = ref({});
+    const userRole = ref(null);
 
     const getBarang = async () => {
       try {
@@ -565,6 +569,7 @@ export default {
       isFading,
       isDeleting,
       errors,
+      userRole,
     };
   },
 };

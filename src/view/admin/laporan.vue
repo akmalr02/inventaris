@@ -112,7 +112,7 @@
             <th>{{ index + 1 }}</th>
             <td>{{ barang.user?.name ?? "-" }}</td>
             <td>{{ barang.barang?.name ?? "-" }}</td>
-            <td>{{ barang.barang?.jumlah ?? "-" }}</td>
+            <td>{{ barang.jumlah_rusak ?? "-" }}</td>
             <td>
               <router-link
                 :to="{ name: 'viewBarangRusak', params: { id: barang.id } }"
@@ -136,6 +136,7 @@
             <th class="text-black">No</th>
             <th class="text-black">Nama Pemesan</th>
             <th class="text-black">Nama Barang</th>
+            <th class="text-black">Jumlah Pesanan</th>
             <th class="text-black">Aksi</th>
           </tr>
         </thead>
@@ -144,6 +145,7 @@
             <th>{{ index + 1 }}</th>
             <td>{{ pesanan.user?.name ?? "-" }}</td>
             <td>{{ pesanan.barang?.name ?? "-" }}</td>
+            <td>{{ pesanan.jumlah_pesanan ?? "-" }}</td>
             <td>
               <router-link
                 :to="{ name: 'viewPesanan', params: { id: pesanan.id } }"
@@ -201,7 +203,7 @@ export default {
       try {
         const response = await apiClient.get("/pesanan");
         this.pesanan = response.data;
-        // console.log(this.pesanan);
+        console.log(this.pesanan);
       } catch (error) {
         console.error("Error:", error);
       }

@@ -123,13 +123,11 @@
     </aside>
   </footer>
 </template>
-
 <script>
 import apiClient from "@/service/inventaris";
 import { toast } from "vue3-toastify";
 import { BackspaceIcon, ArrowDownIcon } from "@heroicons/vue/24/solid";
 import { jsPDF } from "jspdf";
-import QRCode from "qrious";
 
 export default {
   components: {
@@ -157,10 +155,16 @@ export default {
         this.laporan = response.data;
 
         if (this.laporan.image) {
-          // Hapus tanda kurung array jika masih dalam bentuk string array JSON
-          const parsedImage = JSON.parse(this.laporan.image);
-          this.data_gambar = parsedImage; // Simpan nama file gambar
-          console.log(this.data_gambar);
+          try {
+            const parsedImage = JSON.parse(this.laporan.image);
+            this.data_gambar = parsedImage;
+            console.log("Data gambar:", this.data_gambar);
+          } catch (e) {
+            console.error("Gagal mem-parsing data gambar:", e);
+            toast.error("Format data gambar tidak valid.", { autoClose: 3000 });
+          }
+        } else {
+          console.log("Tidak ada gambar yang ditemukan.");
         }
       } catch (error) {
         toast.error("Gagal mengambil data barang.", { autoClose: 3000 });
@@ -168,29 +172,46 @@ export default {
     },
 
     async convertImageToBase64(url) {
-      // Fungsi untuk mengambil gambar dari URL dan mengonversinya ke base64
-      const response = await fetch(url);
-      const blob = await response.blob();
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(blob);
-      });
+      try {
+        const response = await fetch(url, { mode: "cors" });
+        if (!response.ok) {
+          throw new Error(
+            `Gagal mengambil gambar dari ${url}. Status: ${response.status}`
+          );
+        }
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = (error) => {
+            console.error("Kesalahan FileReader:", error);
+            reject(error);
+          };
+          reader.readAsDataURL(blob);
+        });
+      } catch (error) {
+        console.error("Error saat mengonversi gambar ke base64:", error);
+        throw error;
+      }
     },
-
     async downloadPDF() {
-      console.log("Fungsi downloadPDF dipanggil");
-      const doc = new jsPDF();
-      const { description, tanggal, jumlah_rusak, barang, user } = this.laporan;
+      if (!this.laporan || !this.laporan.barang || !this.laporan.jumlah_rusak) {
+        toast.error("Data laporan tidak lengkap.", { autoClose: 3000 });
+        return;
+      }
 
-      // Menentukan ukuran font
+      const doc = new jsPDF();
+      const { description, tanggal, jumlah_rusak, barang, user, image } =
+        this.laporan;
+
+      // Menentukan ukuran font dan menambahkan judul
       doc.setFontSize(16);
       const title = "Laporan Barang Rusak";
       const titleWidth = doc.getTextWidth(title);
       const titleX = (doc.internal.pageSize.getWidth() - titleWidth) / 2;
+      doc.text(title, titleX, 20);
 
-      // Menambahkan konten ke PDF
-      doc.text(title, titleX, 20); // Judul berada di koordinat y = 20 (paling atas)
+      // Menambahkan informasi ke PDF
       doc.setFontSize(12);
       doc.text(`Nama Barang: ${barang?.name ?? "Tidak ditemukan"}`, 10, 30);
       doc.text(`Jumlah Rusak: ${jumlah_rusak}`, 10, 40);
@@ -198,32 +219,46 @@ export default {
       doc.text(`Nama User: ${user?.name ?? "Tidak ditemukan"}`, 10, 60);
       doc.text(`Tanggal: ${tanggal}`, 10, 70);
 
-      // Looping untuk menambahkan gambar dari data_gambar
-      if (Array.isArray(this.data_gambar)) {
-        for (let i = 0; i < this.data_gambar.length; i++) {
-          const img = this.data_gambar[i];
-          console.log("Image Path:", img);
+      doc.setFontSize(8);
 
-          // Ambil gambar dan konversi ke base64
-          const imageUrl = `${this.lokasi}${img}`;
-          console.log("Image URL:", imageUrl);
-          try {
-            const imageBase64 = await this.convertImageToBase64(imageUrl);
-            console.log("Image Base64:", imageBase64);
+      const imageUrls = JSON.parse(image); // Asumsikan image berisi string JSON dari array
+      const baseUrl = this.lokasi;
 
-            // Atur posisi gambar secara dinamis berdasarkan index
-            const yPos = 90 + i * 60; // Jarak antara gambar bisa disesuaikan
-            doc.addImage(imageBase64, "PNG", 10, yPos, 100, 50); // Tambahkan gambar ke PDF
-          } catch (error) {
-            console.error("Gagal mengonversi gambar ke base64:", error);
-          }
+      // Menampilkan gambar di PDF
+      for (let i = 0; i < imageUrls.length; i++) {
+        const img = imageUrls[i].replace(/^\[|\]$/g, "").replace(/"/g, "");
+        // Gunakan endpoint proxy di backend
+        const formattedImageUrl = `${baseUrl}/proxy-image/barangRusak/${img}`;
+
+        try {
+          // Mengambil gambar dari server backend melalui proxy
+          const imageData = await fetch(formattedImageUrl)
+            .then((res) => {
+              if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+              }
+              return res.blob();
+            })
+            .then(
+              (blob) =>
+                new Promise((resolve, reject) => {
+                  const reader = new FileReader();
+                  reader.onloadend = () => resolve(reader.result);
+                  reader.onerror = reject;
+                  reader.readAsDataURL(blob);
+                })
+            );
+
+          // Menambahkan gambar ke PDF
+          doc.addImage(imageData, "JPEG", 10, 80 + i * 50, 50, 50); // Menyesuaikan posisi dan ukuran gambar
+        } catch (error) {
+          console.error(`Gagal memuat gambar ${formattedImageUrl}:`, error);
+          doc.text(`Gagal memuat gambar ${i + 1}`, 10, 90 + i * 10);
         }
-      } else {
-        console.log("Data gambar tidak berupa array atau tidak ditemukan.");
       }
 
-      // Mengunduh file PDF
-      doc.save("laporan_barang_rusak.pdf");
+      // Mengunduh PDF
+      doc.save("Laporan_Barang_Rusak.pdf");
     },
   },
 };

@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
 import Login from "@/view/login.vue";
-// import coba from "@/view/coba.vue";
+import Error402 from "@/view/error.vue";
 
 // Dashboard
-import admin from "@/view/admin/home.vue";
-import Dashboard from "@/view/dashboard.vue";
+import admin from "@/view/dashboard/home.vue";
+import Dashboard from "@/view/dashboard/dashboard.vue";
+import pengguna from "@/view/dashboard/homePengguna.vue";
 
 // akses admin user
 import dataUser from "@/view/admin/dataUser.vue";
@@ -46,83 +48,183 @@ const routes = [
   { path: "/login", name: "login", component: Login },
 
   // Dashboard
+  // hanya untuk admin dan pengelola
   { path: "/", name: "dashboard", component: Dashboard },
-  { path: "/home", name: "homeAdmin", component: admin },
+  {
+    path: "/home",
+    name: "home",
+    component: admin,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
+  },
 
-  // akses admin
-  { path: "/dataUser", name: "dataUser", component: dataUser },
-  { path: "/editUser/:id", name: "editUser", component: editUser },
-  { path: "/tambahUser", name: "tambahUser", component: tambahUser },
-  { path: "/laporan", name: "laporan", component: laporan },
+  //hanya untuk pemakai
+  {
+    path: "/pengguna",
+    name: "homePengguna",
+    component: pengguna,
+    meta: { requiresAuth: true },
+  },
 
-  // laporan barang rusak
-  { path: "/barangRusak", name: "barangRusak", component: barangRusak },
+  // akses admin penuh admin
+  {
+    path: "/dataUser",
+    name: "dataUser",
+    component: dataUser,
+    meta: { requiresAuth: true, roles: ["admin"] },
+  },
+  {
+    path: "/editUser/:id",
+    name: "editUser",
+    component: editUser,
+    meta: { requiresAuth: true, roles: ["admin"] },
+  },
+  {
+    path: "/tambahUser",
+    name: "tambahUser",
+    component: tambahUser,
+    meta: { requiresAuth: true, roles: ["admin"] },
+  },
+  {
+    path: "/laporan",
+    name: "laporan",
+    component: laporan,
+    meta: { requiresAuth: true, roles: ["admin"] },
+  },
+
+  // laporan barang rusak hanya untuk admin dan pengelola
+  {
+    path: "/barangRusak",
+    name: "barangRusak",
+    component: barangRusak,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
+  },
   {
     path: "/tambahR/:id",
     name: "tambahBarangRusak",
     component: tambahBarangRusak,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
   {
     path: "/editR/:id",
     name: "editBarangRusak",
     component: editBarangRusak,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
-  { path: "/viewR/:id", name: "viewBarangKosong", component: viewBarangKosong },
+  {
+    path: "/viewR/:id",
+    name: "viewBarangKosong",
+    component: viewBarangKosong,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
+  },
 
-  // laporan barang kosong
-  { path: "/barangKosong", name: "barangKosong", component: barangKosong },
+  // laporan barang kosong hanya untuk admin dan pengelola
+  {
+    path: "/barangKosong",
+    name: "barangKosong",
+    component: barangKosong,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
+  },
   {
     path: "/tambahK/:id",
     name: "tambahBarangKosong",
     component: tambahBarangKosong,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
   {
     path: "/editK/:id",
     name: "editBarangKosong",
     component: editBarangKosong,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
-  { path: "/viewK/:id", name: "viewBarangRusak", component: viewBarangRusak },
+  {
+    path: "/viewK/:id",
+    name: "viewBarangRusak",
+    component: viewBarangRusak,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
+  },
 
-  // laporan pesanan barang
-  { path: "/pesananBarang", name: "pesananBarang", component: pesananBarang },
+  // laporan pesanan barang hanya untuk admin dan pengelola
+  {
+    path: "/pesananBarang",
+    name: "pesananBarang",
+    component: pesananBarang,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
+  },
   {
     path: "/tambahPesananBarang",
     name: "tambahPesananBarang",
     component: tambahPesananBarang,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
   {
     path: "/editP/:id",
     name: "editPesananBarang",
     component: editPesananBarang,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
-  { path: "/viewP/:id", name: "viewPesanan", component: viewPesanan },
+  {
+    path: "/viewP/:id",
+    name: "viewPesanan",
+    component: viewPesanan,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
+  },
 
-  // barang
+  // barang dapat di buka oleh semua role
   { path: "/barang", name: "barang", component: barang },
+  { path: "/viewB/:id", name: "viewBarang", component: viewBarang },
+  //hanya untuk admin dan pengelola
   {
     path: "/tambahBarang",
     name: "tambahBarang",
     component: tambahBarang,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
   {
     path: "/editB/:id",
     name: "editBarang",
     component: editBarang,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
-  { path: "/viewB/:id", name: "viewBarang", component: viewBarang },
 
-  //categories
-  { path: "/categories", name: "categories", component: categories },
+  //categories hanya untuk admin dan pengelola
+  {
+    path: "/categories",
+    name: "categories",
+    component: categories,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
+  },
   {
     path: "/tambahCategories",
     name: "tambahCategories",
     component: tambahCategories,
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
+
+  //halaman error
+  { path: "/error-402", name: "error404", component: Error402 },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  authStore.loadUserFromLocalStorage(); // Memuat data pengguna dari localStorage
+
+  const requiredRoles = to.meta.roles; // Mengambil roles yang dibutuhkan dari meta route
+  const userRole = authStore.getRole(); // Mengambil role pengguna dari store
+
+  if (to.meta.requiresAuth && !userRole) {
+    // Jika memerlukan autentikasi tetapi pengguna tidak terautentikasi
+    next({ name: "login" });
+  } else if (requiredRoles && !requiredRoles.includes(userRole)) {
+    // Jika role pengguna tidak termasuk dalam roles yang diperbolehkan
+    next({ name: "error404" }); // Arahkan ke halaman error 402
+  } else {
+    next(); // Melanjutkan ke route yang dituju
+  }
 });
 
 export default router;

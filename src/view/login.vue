@@ -57,6 +57,7 @@ import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import apiClient from "@/service/inventaris";
 import { EyeIcon, XCircleIcon } from "@heroicons/vue/24/solid";
+import { useAuthStore } from "@/stores/authStore";
 
 export default {
   components: {
@@ -65,10 +66,14 @@ export default {
   },
   data() {
     return {
-      email: "admin@example.com",
+      email: "@example.com",
       password: "",
       passwordVisible: false,
     };
+  },
+  setup() {
+    const authStore = useAuthStore(); // Gunakan store untuk autentikasi
+    return { authStore };
   },
   methods: {
     togglePasswordVisibility() {
@@ -80,13 +85,33 @@ export default {
           email: this.email,
           password: this.password,
         });
-        // console.log(response);
+
+        // console.log(this.email);
+        // console.log(response.data);
 
         const token = response.data.token;
-        localStorage.setItem("authToken", token);
-        this.checkAuthStatus();
-        this.$router.push({ name: "homeAdmin" });
+        const user = response.data.user;
+
+        // console.log(token);
+        // console.log(user);
+
+        this.authStore.login(user, token);
+
+        if (user.role === "admin" || user.role === "pengelola") {
+          this.$router.push({ name: "home" }); // Route untuk admin dan pengelola
+        } else if (user.role === "pemakai") {
+          this.$router.push({ name: "homePengguna" });
+        } else {
+          // Jika role tidak dikenali, arahkan ke halaman default
+          this.$router.push({ name: "login" });
+        }
+
+        console.log(user.role);
       } catch (error) {
+        console.error(
+          "Login failed:",
+          error.response ? error.response.data : error.message
+        );
         this.notifGagal();
       }
     },
@@ -96,7 +121,7 @@ export default {
     },
     notifGagal() {
       toast("Email atau password salah", {
-        autoClose: 1000,
+        autoClose: 3000,
       });
     },
   },

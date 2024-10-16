@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar bg-neutral-content">
+  <div v-if="!hideNavbar" class="navbar bg-neutral-content">
     <div class="flex-none">
       <div v-if="isLoggedIn" class="dropdown">
         <!-- Hamburger Button -->
@@ -43,7 +43,18 @@
             <li class="text-2xl font-bold m-5">Menu</li>
             <hr class="border-t border-gray-500 p-1" />
 
-            <li class="mb-1">
+            <li v-if="userRole === 'pemakai'" class="mb-1">
+              <router-link
+                to="/pengguna"
+                class="text-lg transition-colors mx-2 p-2"
+                active-class="bg-white text-black rounded-lg"
+                ><HomeIcon class="size-6" />Dashboard
+              </router-link>
+            </li>
+            <li
+              v-if="userRole === 'admin' || userRole === 'pengelola'"
+              class="mb-1"
+            >
               <router-link
                 to="/home"
                 class="text-lg transition-colors mx-2 p-2"
@@ -52,7 +63,9 @@
               </router-link>
             </li>
             <hr class="border-t border-gray-500 p-1" />
-            <li class="mb-1">
+
+            <!-- Data user hanya untuk admin -->
+            <li v-if="userRole === 'admin'" class="mb-1">
               <router-link
                 to="/dataUser"
                 class="text-lg transition-colors mx-2 p-2"
@@ -60,8 +73,12 @@
                 ><UsersIcon class="size-6" />Data User
               </router-link>
             </li>
-            <hr class="border-t border-gray-500 p-1" />
+            <hr
+              v-if="userRole === 'admin'"
+              class="border-t border-gray-500 p-1"
+            />
 
+            <!-- barang dapat di akses untuk semua role -->
             <li class="mb-1">
               <router-link
                 to="/barang"
@@ -72,7 +89,11 @@
             </li>
             <hr class="border-t border-gray-500 p-1" />
 
-            <li class="mb-1">
+            <!-- category hanya untuk admin dan pengelola -->
+            <li
+              v-if="userRole === 'admin' || userRole === 'pengelola'"
+              class="mb-1"
+            >
               <router-link
                 to="/categories"
                 class="text-lg transition-colors mx-2 p-2"
@@ -80,9 +101,16 @@
                 ><BookOpenIcon class="size-6" />Category Barang
               </router-link>
             </li>
-            <hr class="border-t border-gray-500 p-1" />
+            <hr
+              v-if="userRole === 'admin' || userRole === 'pengelola'"
+              class="border-t border-gray-500 p-1"
+            />
 
-            <li class="mb-1">
+            <!-- laporan hanya untuk admin dan pengelola -->
+            <li
+              v-if="userRole === 'admin' || userRole === 'pengelola'"
+              class="mb-1"
+            >
               <router-link
                 to="/laporan"
                 class="text-lg transition-colors mx-2 p-2"
@@ -90,10 +118,16 @@
                 ><DocumentTextIcon class="size-6" />Laporan
               </router-link>
             </li>
-            <hr class="border-t border-gray-500 p-1" />
+            <hr
+              v-if="userRole === 'admin' || userRole === 'pengelola'"
+              class="border-t border-gray-500 p-1"
+            />
 
-            <!-- Dropdown tombol untuk memilih laporan -->
-            <div class="text-lg transition-colors mx-2 p-2 dropdown m-3">
+            <!-- Dropdown tombol untuk memilih laporan hanya untuk admin dan pengelola -->
+            <div
+              v-if="userRole === 'admin' || userRole === 'pengelola'"
+              class="text-lg transition-colors mx-2 p-2 dropdown m-3"
+            >
               <button class="dropdown-toggle" @click="toggleDropdown">
                 <FolderOpenIcon class="size-6" />Pilih Laporan
               </button>
@@ -130,7 +164,10 @@
                 </li>
               </ul>
             </div>
-            <hr class="border-t border-gray-500 p-1" />
+            <hr
+              v-if="userRole === 'admin' || userRole === 'pengelola'"
+              class="border-t border-gray-500 p-1"
+            />
           </ul>
         </div>
 
@@ -174,6 +211,7 @@ import {
 } from "@heroicons/vue/24/solid";
 import jwt_decode from "jwt-decode";
 import apiClient from "@/service/inventaris";
+import { useAuthStore } from "@/stores/authStore";
 
 export default {
   components: {
@@ -189,6 +227,8 @@ export default {
       isLoggedIn: false,
       isMenuOpen: false,
       isDropdownOpen: false,
+      userRole: null,
+      hideNavbar: false,
     };
   },
   created() {
@@ -211,6 +251,7 @@ export default {
         return Promise.reject(error);
       }
     );
+    this.checkRoute();
   },
   beforeDestroy() {
     // Hapus event listener saat komponen dihancurkan
@@ -219,32 +260,53 @@ export default {
   methods: {
     checkAuthStatus() {
       const token = localStorage.getItem("authToken");
+      const authStore = useAuthStore(); // Ambil authStore dari Pinia
 
       if (token) {
         // Decode token untuk mendapatkan waktu expired
-        const decodedToken = jwt_decode(token); // Menggunakan jwt_decode
-        const currentTime = Date.now() / 1000; // waktu sekarang dalam detik
+        try {
+          const decodedToken = jwt_decode(token); // Menggunakan jwt_decode
+          const currentTime = Date.now() / 1000; // waktu sekarang dalam detik
 
-        // Cek apakah token sudah expired
-        if (decodedToken.exp < currentTime) {
-          // Jika token expired, logout otomatis
-          this.handleTokenExpired();
-        } else {
-          this.isLoggedIn = true;
+          // Cek apakah token sudah expired
+          if (decodedToken.exp < currentTime) {
+            this.handleTokenExpired();
+          } else {
+            this.isLoggedIn = true;
+
+            // Ambil role dari store Pinia
+            const role = authStore.getRole(); // Mengambil role dari store
+            this.userRole = role;
+            console.log("Role dari Pinia:", role);
+          }
+        } catch (error) {
+          console.error("Error decoding token:", error);
+          this.isLoggedIn = false; // Jika decoding gagal, set isLoggedIn ke false
         }
       } else {
         this.isLoggedIn = false;
       }
     },
+
+    checkRoute() {
+      const currentRoute = this.$route.name;
+      // Daftar rute yang ingin menyembunyikan navbar
+      const hiddenRoutes = ["error404"]; // Ganti "errorPage" dengan nama rute halaman error Anda
+
+      this.hideNavbar = hiddenRoutes.includes(currentRoute);
+    },
+
     handleTokenExpired() {
       // Hapus token dari localStorage dan arahkan ke halaman login
       localStorage.removeItem("authToken");
       this.isLoggedIn = false;
+      this.userRole = null;
       this.$router.push({ name: "login" });
     },
     logout() {
       localStorage.removeItem("authToken");
       this.isLoggedIn = false;
+      this.userRole = null;
       this.$router.push({ name: "login" });
     },
     handleBeforeUnload(event) {
@@ -266,7 +328,12 @@ export default {
       this.isMenuOpen = false;
     },
     homeAdmin() {
-      this.$router.push({ name: "homeAdmin" });
+      if (this.userRole === "admin" || this.userRole === "pengelola") {
+        this.$router.push({ name: "home" });
+      } else if (this.userRole === "pemakai") {
+        this.$router.push({ name: "homePengguna" });
+        console.log(this.userRole);
+      }
     },
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
@@ -275,6 +342,7 @@ export default {
   watch: {
     $route() {
       this.checkAuthStatus();
+      this.checkRoute();
     },
   },
 };
