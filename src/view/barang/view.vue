@@ -12,11 +12,23 @@
 
   <div class="hero bg-base-200 m-0 p-5 rounded-lg shadow-lg w-full">
     <div class="hero-content flex-col lg:flex-row">
-      <img
-        :src="`${lokasi}/${data_gambar}`"
-        alt="Gambar Barang"
-        class="max-w-sm rounded-lg shadow-2xl"
-      />
+      <div
+        v-if="data_gambar && data_gambar.length"
+        class="carousel rounded-box w-80 border border-gray-300 p-2"
+      >
+        <div
+          class="carousel-item w-full"
+          v-for="(image, index) in data_gambar"
+          :key="index"
+        >
+          <img
+            :src="`${lokasi}/${image}`"
+            class="w-full h-auto"
+            alt="Gambar Barang"
+          />
+        </div>
+      </div>
+
       <div>
         <h1 class="text-5xl font-bold mb-5">
           {{ barang.name ?? "Nama tidak ada" }}
@@ -234,12 +246,12 @@ export default {
         // Ekstrak nama file gambar dan simpan di data_gambar
         if (this.barang.image) {
           // Hapus tanda kurung array jika masih dalam bentuk string array JSON
-          const parsedImage = this.barang.image.replace(/[\[\]"]/g, "");
+          const parsedImage = JSON.parse(this.barang.image);
           this.data_gambar = parsedImage; // Simpan nama file gambar
-          // console.log(this.data_gambar);
+          console.log(this.data_gambar);
         }
 
-        // console.log(this.barang);
+        console.log(this.image);
       } catch (error) {
         toast.error("Gagal mengambil data barang.", { autoClose: 3000 });
       }

@@ -168,6 +168,7 @@ export default {
       try {
         const response = await apiClient.get(`/barang/${route.params.id}`);
         const barang = response.data;
+        console.log(barang);
         name.value = barang.name;
         description.value = barang.description;
         categories_id.value = barang.categories_id;
@@ -185,10 +186,13 @@ export default {
 
     const handleImageUpload = (event) => {
       const files = Array.from(event.target.files);
+      console.log(files);
+
       const validFiles = files.filter(
         (file) => file.type.startsWith("image/") && file.size <= 2048 * 1024
       );
       newImages.value = [...newImages.value, ...validFiles];
+      console.log(newImages);
     };
 
     const removeNewImage = (index) => {

@@ -66,7 +66,7 @@ export default {
   },
   data() {
     return {
-      email: "@example.com",
+      email: "",
       password: "",
       passwordVisible: false,
     };
@@ -95,6 +95,8 @@ export default {
         // console.log(token);
         // console.log(user);
 
+        // alert(user.name);
+
         this.authStore.login(user, token);
 
         if (user.role === "admin" || user.role === "pengelola") {
@@ -106,7 +108,7 @@ export default {
           this.$router.push({ name: "login" });
         }
 
-        console.log(user.role);
+        // console.log(user);
       } catch (error) {
         console.error(
           "Login failed:",

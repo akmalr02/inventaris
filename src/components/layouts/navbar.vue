@@ -190,12 +190,44 @@
       </button>
     </div>
 
-    <!-- Authentication Links -->
-    <div class="navbar-end">
-      <router-link v-if="!isLoggedIn" to="/login" class="btn">
-        Login
-      </router-link>
-      <button v-else @click="logout" class="btn">Logout</button>
+    <!-- tombol dropdown account -->
+    <div class="flex flex-1 justify-end px-2">
+      <div class="flex items-stretch">
+        <div class="dropdown dropdown-end" v-if="isLoggedIn">
+          <div tabindex="0" role="button" class="btn btn-ghost rounded-btn">
+            <div class="avatar p-1">
+              <div
+                class="ring-current ring-offset-base-100 w-10 rounded-full ring ring-offset-1"
+              >
+                <img
+                  :src="imagePreviewUrl + '?v=' + new Date().getTime()"
+                  alt="Profil"
+                />
+              </div>
+            </div>
+            {{ user.name ?? "-" }}
+          </div>
+          <ul
+            tabindex="0"
+            class="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-52 p-2 shadow"
+          >
+            <li>
+              <router-link to="/profil"
+                ><IdentificationIcon class="size-6" /> your profil
+              </router-link>
+            </li>
+            <!-- <li>
+              <router-link to="/password"> cache password </router-link>
+            </li> -->
+            <li>
+              <button @click="logout" class="btn bg-error">Logout</button>
+            </li>
+          </ul>
+        </div>
+        <router-link v-if="!isLoggedIn" to="/login" class="btn">
+          Login
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -208,6 +240,7 @@ import {
   FolderOpenIcon,
   BriefcaseIcon,
   BookOpenIcon,
+  IdentificationIcon,
 } from "@heroicons/vue/24/solid";
 import jwt_decode from "jwt-decode";
 import apiClient from "@/service/inventaris";
@@ -221,6 +254,7 @@ export default {
     FolderOpenIcon,
     BriefcaseIcon,
     BookOpenIcon,
+    IdentificationIcon,
   },
   data() {
     return {
@@ -229,19 +263,27 @@ export default {
       isDropdownOpen: false,
       userRole: null,
       hideNavbar: false,
+      lokasi: "http://inventaris.test/storage",
+      imagePreviewUrl: null,
     };
   },
+  computed: {
+    authStore() {
+      return useAuthStore(); // Mengambil seluruh data dari Pinia
+    },
+    user() {
+      return this.authStore.user; // Mengakses data user secara keseluruhan
+    },
+  },
+
   created() {
     this.checkAuthStatus();
   },
   mounted() {
-    // Set flag saat halaman dimuat ulang
     sessionStorage.setItem("isPageRefreshed", "false");
 
-    // Tambahkan event listener untuk menangani logout saat tab/jendela ditutup
     window.addEventListener("beforeunload", this.handleBeforeUnload);
 
-    // Menangani token expired saat menerima response 401 dari backend
     apiClient.interceptors.response.use(
       (response) => response,
       (error) => {
@@ -254,50 +296,48 @@ export default {
     this.checkRoute();
   },
   beforeDestroy() {
-    // Hapus event listener saat komponen dihancurkan
     window.removeEventListener("beforeunload", this.handleBeforeUnload);
+  },
+  watch: {
+    // Perbarui imagePreviewUrl ketika image berubah
+    image: {
+      immediate: true,
+      handler(newImage) {
+        this.updateImagePreview(newImage);
+      },
+    },
+    $route() {
+      this.checkAuthStatus();
+      this.checkRoute();
+    },
   },
   methods: {
     checkAuthStatus() {
       const token = localStorage.getItem("authToken");
-      const authStore = useAuthStore(); // Ambil authStore dari Pinia
-
       if (token) {
-        // Decode token untuk mendapatkan waktu expired
         try {
-          const decodedToken = jwt_decode(token); // Menggunakan jwt_decode
-          const currentTime = Date.now() / 1000; // waktu sekarang dalam detik
-
-          // Cek apakah token sudah expired
+          const decodedToken = jwt_decode(token);
+          const currentTime = Date.now() / 1000;
           if (decodedToken.exp < currentTime) {
             this.handleTokenExpired();
           } else {
             this.isLoggedIn = true;
-
-            // Ambil role dari store Pinia
-            const role = authStore.getRole(); // Mengambil role dari store
-            this.userRole = role;
-            console.log("Role dari Pinia:", role);
+            this.userRole = this.authStore.getRole();
+            this.updateImagePreview(this.authStore.user.image);
           }
         } catch (error) {
-          console.error("Error decoding token:", error);
-          this.isLoggedIn = false; // Jika decoding gagal, set isLoggedIn ke false
+          this.isLoggedIn = false;
         }
       } else {
         this.isLoggedIn = false;
       }
     },
-
     checkRoute() {
       const currentRoute = this.$route.name;
-      // Daftar rute yang ingin menyembunyikan navbar
-      const hiddenRoutes = ["error404"]; // Ganti "errorPage" dengan nama rute halaman error Anda
-
+      const hiddenRoutes = ["error404"];
       this.hideNavbar = hiddenRoutes.includes(currentRoute);
     },
-
     handleTokenExpired() {
-      // Hapus token dari localStorage dan arahkan ke halaman login
       localStorage.removeItem("authToken");
       this.isLoggedIn = false;
       this.userRole = null;
@@ -310,13 +350,10 @@ export default {
       this.$router.push({ name: "login" });
     },
     handleBeforeUnload(event) {
-      // Tandai halaman di-refresh
       sessionStorage.setItem("isPageRefreshed", "true");
 
-      // Mengecek apakah halaman benar-benar ditutup
       const isPageRefreshed = sessionStorage.getItem("isPageRefreshed");
       if (isPageRefreshed === "false") {
-        // Jika halaman ditutup, hapus token (logout)
         localStorage.removeItem("authToken");
         this.isLoggedIn = false;
       }
@@ -332,17 +369,34 @@ export default {
         this.$router.push({ name: "home" });
       } else if (this.userRole === "pemakai") {
         this.$router.push({ name: "homePengguna" });
-        console.log(this.userRole);
       }
     },
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
-  },
-  watch: {
-    $route() {
-      this.checkAuthStatus();
-      this.checkRoute();
+    updateImagePreview(newImage) {
+      // Pastikan newImage bukan null, kosong, atau string yang tidak valid
+      if (newImage && newImage !== "null" && newImage !== "[]") {
+        try {
+          let images = JSON.parse(newImage);
+
+          // Jika images adalah array dan memiliki elemen
+          if (Array.isArray(images) && images.length > 0) {
+            this.imagePreviewUrl = `${this.lokasi}/${images[0]}`.replace(
+              /[\[\]"]/g,
+              ""
+            );
+          } else {
+            this.imagePreviewUrl = "/img/profil.jpg"; // Menampilkan gambar default
+          }
+        } catch (error) {
+          // Jika JSON.parse gagal, fallback ke gambar default
+          this.imagePreviewUrl = "/img/profil.jpg";
+        }
+      } else {
+        // Jika newImage null atau kosong
+        this.imagePreviewUrl = "/img/profil.jpg";
+      }
     },
   },
 };

@@ -35,7 +35,7 @@
           <th class="text-black">Descripsi</th>
           <th class="text-black">Jumlah Barnag</th>
           <th class="text-black">Tanggal</th>
-          <th class="text-black">Aksi</th>
+          <th v-if="userRole === 'admin'" class="text-black">Aksi</th>
         </tr>
       </thead>
       <tbody>
@@ -61,7 +61,7 @@
             <!-- Tampilkan tanggal jika ada -->
             {{ laporan.tanggal ?? "-" }}
           </td>
-          <td>
+          <td v-if="userRole === 'admin'">
             <router-link
               :to="{ name: 'editBarangRusak', params: { id: laporan.id } }"
               class="btn btn-outline btn-warning mbs-2"
@@ -84,6 +84,7 @@
 import apiClient from "@/service/inventaris";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { useAuthStore } from "@/stores/authStore";
 import {
   TrashIcon,
   PencilIcon,
@@ -101,12 +102,18 @@ export default {
   data() {
     return {
       barangRusak: [],
+      userRole: "",
     };
   },
   created() {
+    this.checkAuthStatus();
     this.getBarangRusak();
   },
   methods: {
+    async checkAuthStatus() {
+      const authStore = useAuthStore();
+      this.userRole = authStore.getRole();
+    },
     async getBarangRusak() {
       try {
         const response = await apiClient.get("/barangRusak");

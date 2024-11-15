@@ -44,6 +44,10 @@ import viewBarang from "@/view/barang/view.vue";
 import categories from "@/view/categories/category.vue";
 import tambahCategories from "@/view/categories/tambah.vue";
 
+// user all
+import profil from "@/view/seting/profil.vue";
+import edit from "@/view/seting/edit.vue";
+
 const routes = [
   { path: "/login", name: "login", component: Login },
 
@@ -84,11 +88,13 @@ const routes = [
     component: tambahUser,
     meta: { requiresAuth: true, roles: ["admin"] },
   },
+
+  // seluruh laporan admin dan pengelola
   {
     path: "/laporan",
     name: "laporan",
     component: laporan,
-    meta: { requiresAuth: true, roles: ["admin"] },
+    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
 
   // laporan barang rusak hanya untuk admin dan pengelola
@@ -202,6 +208,10 @@ const routes = [
 
   //halaman error
   { path: "/error-402", name: "error404", component: Error402 },
+
+  // seting
+  { path: "/profil", name: "profil", component: profil },
+  { path: "/editU/:id", name: "editU", component: edit, props: true },
 ];
 
 const router = createRouter({

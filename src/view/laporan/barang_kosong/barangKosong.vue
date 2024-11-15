@@ -63,11 +63,13 @@
               ><PencilIcon class="size-6 text-error-200-500" />Tambah
               persediaan</router-link
             >
-            <form @submit.prevent="confirmDelete(laporan.id)">
-              <button type="submit" class="btn btn-outline btn-error mt-3">
-                <TrashIcon class="size-6 text-error-200-500" />Delete
-              </button>
-            </form>
+            <div v-if="userRole === 'admin'">
+              <form @submit.prevent="confirmDelete(laporan.id)">
+                <button type="submit" class="btn btn-outline btn-error mt-3">
+                  <TrashIcon class="size-6 text-error-200-500" />Delete
+                </button>
+              </form>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -78,6 +80,7 @@
 import apiClient from "@/service/inventaris";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { useAuthStore } from "@/stores/authStore";
 import {
   TrashIcon,
   PencilIcon,
@@ -95,12 +98,18 @@ export default {
   data() {
     return {
       barangKosong: [],
+      userRole: "",
     };
   },
   created() {
+    this.checkAuthStatus();
     this.getBarangkosong();
   },
   methods: {
+    async checkAuthStatus() {
+      const authStore = useAuthStore();
+      this.userRole = authStore.getRole();
+    },
     async getBarangkosong() {
       try {
         const response = await apiClient.get("/barangKosong");

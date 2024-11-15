@@ -30,7 +30,11 @@
 <template>
   <div class="overflow-x-auto m-9">
     <div class="px-4">
-      <router-link to="/tambahBarang" class="btn btn-primary mb-3 ml-5">
+      <router-link
+        v-if="userRole === 'admin' || userRole === 'pengelola'"
+        to="/tambahBarang"
+        class="btn btn-primary mb-3 ml-5"
+      >
         <PlusCircleIcon class="size-6 text-error-200-500" />Tambah Barang Baru
       </router-link>
       <div class="form-control mx-5">
@@ -65,12 +69,15 @@
           <td>{{ barang.category?.name ?? "-" }}</td>
           <td>{{ barang.jumlah ?? "-" }}</td>
           <td>
+            <!-- Tombol View selalu ditampilkan -->
             <router-link
               :to="{ name: 'viewBarang', params: { id: barang.id } }"
               class="btn btn-primary mr-2 mb-2"
             >
               <EyeIcon class="size-6 text-blue-100-300" /> View
             </router-link>
+
+            <!-- Tombol Edit hanya untuk admin dan pengelola -->
             <router-link
               v-if="userRole === 'admin' || userRole === 'pengelola'"
               :to="{ name: 'editBarang', params: { id: barang.id } }"
@@ -78,8 +85,9 @@
             >
               <PencilIcon class="size-6 text-yellow-200-500" /> Edit
             </router-link>
+
+            <!-- Dropdown Pilih Laporan hanya untuk admin dan pengelola -->
             <div v-if="userRole === 'admin' || userRole === 'pengelola'">
-              <!-- Dropdown tombol untuk memilih laporan -->
               <div class="relative inline-block">
                 <button
                   class="text-lg px-2 btn btn-primary bg-blue-500 text-white menu-dropdown-show"
@@ -112,8 +120,10 @@
                   </li>
                 </ul>
               </div>
+            </div>
 
-              <!-- Bagian delet -->
+            <!-- Tombol Delete hanya untuk admin dan pengelola -->
+            <div v-if="userRole === 'admin'">
               <div
                 v-if="!isDeleting[barang.id]"
                 :class="{ 'fade-out': isFading[barang.id] }"
@@ -322,7 +332,7 @@ import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import apiClient from "@/service/inventaris";
 import { useRouter } from "vue-router";
-// import { useAuthStore } from "@/stores/authStore";
+import { useAuthStore } from "@/stores/authStore";
 import {
   TrashIcon,
   PencilIcon,
@@ -359,6 +369,22 @@ export default {
     const isFading = ref({});
     const isDeleting = ref({});
     const userRole = ref(null);
+    const authStore = useAuthStore();
+
+    // Cek status role
+    const checkAuthStatus = () => {
+      const role = authStore.getRole();
+      userRole.value = role;
+
+      // Logika pengecekan role
+      if (role === "admin") {
+        // Aksi untuk admin
+      } else if (role === "pengelola") {
+        // Aksi untuk pengelola
+      } else if (role === "pemakai") {
+        // Aksi untuk pemakai
+      }
+    };
 
     const getBarang = async () => {
       try {
@@ -428,6 +454,7 @@ export default {
     };
 
     onMounted(async () => {
+      checkAuthStatus();
       await getBarang();
     });
 
