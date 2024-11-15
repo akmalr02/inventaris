@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\CategoriesController;
 use App\Http\Controllers\Api\LaporanBarangRusakController;
 use App\Http\Controllers\Api\LaporanBarangKosongController;
 use App\Http\Controllers\Api\LaporanPesananBarangController;
+use App\Http\Controllers\Api\ProfilController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -25,6 +26,10 @@ Route::post('/barangKosong/{id}/tambahBarang', [BarangController::class, 'tambah
 
 
 Route::apiResource('admin', AdminController::class)->middleware('auth:api');
+Route::apiResource('profil', ProfilController::class)->middleware('auth:api');
+Route::delete('profil/{id}/destroy-image', [ProfilController::class, 'destroyImage'])->middleware('auth:api');
+Route::post('/profil/{id}/ganti-password', [ProfilController::class, 'gantiPassword'])->middleware('auth:api');
+
 
 Route::apiResource('laporan', laporanController::class)->middleware('auth:api');
 Route::apiResource('barangRusak', LaporanBarangRusakController::class)->middleware('auth:api');
