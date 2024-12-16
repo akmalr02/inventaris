@@ -6,6 +6,7 @@ use App\Models\Barang;
 use Illuminate\Http\Request;
 use App\Models\PesananBarang;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class LaporanPesananBarangController extends Controller
@@ -20,15 +21,10 @@ class LaporanPesananBarangController extends Controller
     {
         $data = $request->validate([
             'barang_id' => 'required|exists:barangs,id',
-            'description' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
             'tanggal' => 'required|date',
             'jumlah_pesanan' => 'required|integer',
         ]);
-
-        $user = Auth::user();
-        if (!$user) {
-            return response()->json(['message' => 'User tidak ditemukan'], 401);
-        }
 
         // Mendapatkan pengguna yang sedang login
         $user = Auth::user();
@@ -68,6 +64,29 @@ class LaporanPesananBarangController extends Controller
         return response()->json($pesananBarang);
     }
 
+    public function pesananUser($id)
+    {
+        $user = Auth::user();
+
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+
+        $pesananUser = PesananBarang::with('user', 'barang')
+            ->where('user_id', $id)
+            ->get();
+
+
+        if ($pesananUser->isEmpty()) {
+            return response()->json(['message' => 'No orders found for this user'], 404);
+        }
+
+        return response()->json($pesananUser);
+    }
+
+
     public function update(Request $request, $id)
     {
         $pesananBarang = PesananBarang::find($id);
@@ -78,7 +97,7 @@ class LaporanPesananBarangController extends Controller
 
         $data = $request->validate([
             'barang_id' => 'required|exists:barangs,id',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'tanggal' => 'required|date',
             'jumlah_pesanan' => 'required|integer',
         ]);

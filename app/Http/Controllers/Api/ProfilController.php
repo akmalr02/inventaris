@@ -120,38 +120,37 @@ class ProfilController extends Controller
         return response()->json(['message' => 'Gambar berhasil dihapus'], 200);
     }
 
-
     public function gantiPassword(Request $request, String $id)
     {
-        // Cek user berdasarkan id
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
+        try {
+            // Validasi input
+            $validatedData = $request->validate([
+                'current_password' => 'required',
+                'password' => 'required|min:3|max:255|confirmed',
+            ]);
+
+            // Cek user berdasarkan id
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json(['error' => 'User tidak ditemukan'], 404);
+            }
+
+            // Cek apakah password lama cocok
+            if (!Hash::check($validatedData['current_password'], $user->password)) {
+                return response()->json(['error' => 'Password lama salah!'], 400);
+            }
+
+            // Hash password baru dan update
+            $user->update([
+                'password' => Hash::make($validatedData['password']),
+            ]);
+
+            return response()->json(['message' => 'Berhasil mengubah password'], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Terjadi kesalahan saat mengubah password',
+                'details' => $e->getMessage(),
+            ], 500);
         }
-        // return response()->json($user->password);
-
-        // Cek password lama
-        if (!Hash::check($request->current_password, $user->password)) {
-            return response()->json(['error' => 'Password Lama Salah!!!'], 400);
-            // return response()->json(!Hash::check($request->current_password, $user->password));
-        }
-        // return response()->json('berhasil');
-
-
-        // Aturan validasi
-        $rules = [
-            'password' => 'required|min:3|max:255|confirmed',
-        ];
-
-        // Validasi input
-        $data = $request->validate($rules);
-
-        // Hash password baru
-        $hashedPassword = Hash::make($data['password']);
-
-        // Update password user
-        $user->update(['password' => $hashedPassword]);
-
-        return response()->json(['message' => 'Berhasil Mengubah Password'], 200);
     }
 }

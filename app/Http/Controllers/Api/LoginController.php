@@ -2,48 +2,39 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Handle login request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\LoginRequest  $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function __invoke(Request $request)
+    public function __invoke(LoginRequest $request)
     {
+        // DB::enableQueryLog();
 
-        //set validation
-        $validator = Validator::make($request->all(), [
-            'email'     => 'required|email',
-            'password'  => 'required|min:8'
-        ]);
-
-        //if validation fails
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        //get credentials from request
+        // Ambil kredensial dari request
         $credentials = $request->only('email', 'password');
 
-        //if auth failed
+        // Coba autentikasi menggunakan guard 'api'
         if (!$token = auth()->guard('api')->attempt($credentials)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Email atau Password Anda salah'
+                'message' => 'Email atau Password Anda salah',
             ], 401);
         }
+        // dd(DB::getQueryLog());
 
-        //if auth success
+        // Autentikasi berhasil
         return response()->json([
             'success' => true,
             'user'    => auth()->guard('api')->user(),
-            'token'   => $token
+            'token'   => $token,
         ], 200);
     }
 }

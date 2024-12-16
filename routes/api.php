@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\CategoriesController;
 use App\Http\Controllers\Api\LaporanBarangRusakController;
 use App\Http\Controllers\Api\LaporanBarangKosongController;
 use App\Http\Controllers\Api\LaporanPesananBarangController;
+use App\Http\Controllers\Api\PesananController;
 use App\Http\Controllers\Api\ProfilController;
 
 Route::get('/user', function (Request $request) {
@@ -35,3 +36,6 @@ Route::apiResource('laporan', laporanController::class)->middleware('auth:api');
 Route::apiResource('barangRusak', LaporanBarangRusakController::class)->middleware('auth:api');
 Route::apiResource('barangKosong', LaporanBarangKosongController::class)->middleware('auth:api');
 Route::apiResource('pesanan', LaporanPesananBarangController::class)->middleware('auth:api');
+Route::get('/pesanan/{id}/user', [LaporanPesananBarangController::class, 'pesananUser'])->middleware('auth:api');
+
+// Route::apiResource('pesananUser', PesananController::class)->middleware('auth:api');

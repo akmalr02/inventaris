@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('barang_id');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->date('tanggal');
             $table->integer('jumlah_pesanan');
             $table->timestamps();
