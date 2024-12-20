@@ -1,18 +1,24 @@
 <template>
-  <div class="flex justify-between items-center mt-4">
-    <router-link to="/tambahUser" class="btn btn-primary mb-3 ml-5">
-      <PlusCircleIcon class="size-6 text-error-200-500" />Tambah User
-    </router-link>
-    <div class="form-control mx-auto">
-      <input
-        type="text"
-        placeholder="Search"
-        class="input input-bordered w-24 md:w-auto"
-        v-model="searchQuery"
-      />
+  <div class="flex items-center mt-4">
+    <div class="px-4">
+      <router-link to="/tambahUser" class="btn btn-primary mb-3 ml-5">
+        <PlusCircleIcon class="size-6 text-error-200-500" />Tambah User
+      </router-link>
+
+      <div class="form-control mx-5">
+        <input
+          type="text"
+          placeholder="Search"
+          class="input input-bordered w-24 md:w-auto"
+          v-model="searchQuery"
+        />
+      </div>
     </div>
   </div>
 
+  <div class="header">
+    <p class="font-bold">Daftar User</p>
+  </div>
   <div class="overflow-x-auto m-9">
     <table class="table">
       <!-- head -->

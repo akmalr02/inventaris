@@ -18,20 +18,17 @@ import laporan from "@/view/admin/laporan.vue";
 
 // laporoan barang kosong
 import barangKosong from "@/view/laporan/barang_kosong/barangKosong.vue";
-import tambahBarangKosong from "@/view/laporan/barang_kosong/tambah.vue";
 import editBarangKosong from "@/view/laporan/barang_kosong/edit.vue";
 import viewBarangKosong from "@/view/laporan/barang_kosong/view.vue";
 
 // laporoan barang rusak
 import barangRusak from "@/view/laporan/barang_rusak/barangRusak.vue";
-import tambahBarangRusak from "@/view/laporan/barang_rusak/tambah.vue";
 import editBarangRusak from "@/view/laporan/barang_rusak/edit.vue";
 import viewBarangRusak from "@/view/laporan/barang_rusak/view.vue";
 
 // laporoan pesanan barnag
 import pesananBarang from "@/view/laporan/pesanan/pesananBarang.vue";
 import editPesananBarang from "@/view/laporan/pesanan/edit.vue";
-import tambahPesananBarang from "@/view/laporan/pesanan/tambah.vue";
 import viewPesanan from "@/view/laporan/pesanan/view.vue";
 
 // barang
@@ -47,6 +44,10 @@ import tambahCategories from "@/view/categories/tambah.vue";
 // user all
 import profil from "@/view/seting/profil.vue";
 import edit from "@/view/seting/edit.vue";
+import ubah from "@/view/seting/ubah.vue";
+
+//pesanan
+import pesananUser from "@/view/user/index.vue";
 
 const routes = [
   { path: "/login", name: "login", component: Login },
@@ -66,7 +67,7 @@ const routes = [
     path: "/pengguna",
     name: "homePengguna",
     component: pengguna,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, roles: ["pemakai"] },
   },
 
   // akses admin penuh admin
@@ -104,12 +105,7 @@ const routes = [
     component: barangRusak,
     meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
-  {
-    path: "/tambahR/:id",
-    name: "tambahBarangRusak",
-    component: tambahBarangRusak,
-    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
-  },
+
   {
     path: "/editR/:id",
     name: "editBarangRusak",
@@ -130,12 +126,7 @@ const routes = [
     component: barangKosong,
     meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
-  {
-    path: "/tambahK/:id",
-    name: "tambahBarangKosong",
-    component: tambahBarangKosong,
-    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
-  },
+
   {
     path: "/editK/:id",
     name: "editBarangKosong",
@@ -156,12 +147,7 @@ const routes = [
     component: pesananBarang,
     meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
   },
-  {
-    path: "/tambahPesananBarang",
-    name: "tambahPesananBarang",
-    component: tambahPesananBarang,
-    meta: { requiresAuth: true, roles: ["admin", "pengelola"] },
-  },
+
   {
     path: "/editP/:id",
     name: "editPesananBarang",
@@ -178,6 +164,7 @@ const routes = [
   // barang dapat di buka oleh semua role
   { path: "/barang", name: "barang", component: barang },
   { path: "/viewB/:id", name: "viewBarang", component: viewBarang },
+
   //hanya untuk admin dan pengelola
   {
     path: "/tambahBarang",
@@ -212,6 +199,15 @@ const routes = [
   // seting
   { path: "/profil", name: "profil", component: profil },
   { path: "/editU/:id", name: "editU", component: edit, props: true },
+  { path: "/password/:id", name: "password", component: ubah, props: true },
+
+  //pesanan user
+  {
+    path: "/pesanan",
+    name: "pesanan",
+    component: pesananUser,
+    meta: { requiresAuth: true, roles: ["pemakai"] },
+  },
 ];
 
 const router = createRouter({

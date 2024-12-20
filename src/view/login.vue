@@ -6,6 +6,7 @@
           class="card bg-base-200 w-full max-w-sm shrink-0 shadow-2xl animate-fade-in"
         >
           <form class="card-body" @submit.prevent="login">
+            <h1 class="font-bold text-center text-2xl mb-2">Login</h1>
             <div class="form-control">
               <label class="label">
                 <span class="label-text">Email</span>

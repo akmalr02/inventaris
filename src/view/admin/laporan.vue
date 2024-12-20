@@ -27,8 +27,6 @@
 }
 </style>
 
-<!-- tampilkan nomor nama_user nama_barang dan aksi -->
-
 <template>
   <div class="overflow-x-auto m-9">
     <div class="container">

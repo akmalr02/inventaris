@@ -38,11 +38,11 @@
             ✖
           </button>
 
-          <!-- Menu List -->
           <ul class="menu-list p-2 my-5">
             <li class="text-2xl font-bold m-5">Menu</li>
             <hr class="border-t border-gray-500 p-1" />
 
+            <!-- Menu List user -->
             <li v-if="userRole === 'pemakai'" class="mb-1">
               <router-link
                 to="/pengguna"
@@ -51,6 +51,8 @@
                 ><HomeIcon class="size-6" />Dashboard
               </router-link>
             </li>
+
+            <!-- dashboard admin dan pengelola -->
             <li
               v-if="userRole === 'admin' || userRole === 'pengelola'"
               class="mb-1"
@@ -63,6 +65,16 @@
               </router-link>
             </li>
             <hr class="border-t border-gray-500 p-1" />
+
+            <!-- Menu List user -->
+            <li v-if="userRole === 'pemakai'" class="mb-1">
+              <router-link
+                to="/pesanan"
+                class="text-lg transition-colors mx-2 p-2"
+                active-class="bg-white text-black rounded-lg"
+                ><ShoppingCartIcon class="size-6" />Pesanan Saya
+              </router-link>
+            </li>
 
             <!-- Data user hanya untuk admin -->
             <li v-if="userRole === 'admin'" class="mb-1">
@@ -78,8 +90,8 @@
               class="border-t border-gray-500 p-1"
             />
 
-            <!-- barang dapat di akses untuk semua role -->
-            <li class="mb-1">
+            <!-- barang untuk admin dan pengelola -->
+            <li v-if="userRole === 'admin'" class="mb-1">
               <router-link
                 to="/barang"
                 class="text-lg transition-colors mx-2 p-2"
@@ -193,11 +205,17 @@
     <!-- tombol dropdown account -->
     <div class="flex flex-1 justify-end px-2">
       <div class="flex items-stretch">
+        <!-- Profil Dropdown -->
         <div class="dropdown dropdown-end" v-if="isLoggedIn">
-          <div tabindex="0" role="button" class="btn btn-ghost rounded-btn">
+          <div
+            tabindex="0"
+            role="button"
+            class="btn btn-ghost rounded-btn flex items-center space-x-2"
+          >
+            <!-- Avatar -->
             <div class="avatar p-1">
               <div
-                class="ring-current ring-offset-base-100 w-10 rounded-full ring ring-offset-1"
+                class="ring-current ring-offset-base-100 w-10 h-10 rounded-full ring ring-offset-1"
               >
                 <img
                   :src="imagePreviewUrl + '?v=' + new Date().getTime()"
@@ -205,25 +223,32 @@
                 />
               </div>
             </div>
-            {{ user.name ?? "-" }}
+
+            <!-- Nama Pengguna -->
+            <span
+              class="hidden sm:block text-sm font-medium truncate max-w-[150px]"
+            >
+              {{ user.name ?? "-" }}
+            </span>
           </div>
+
+          <!-- Dropdown Menu -->
           <ul
             tabindex="0"
             class="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-52 p-2 shadow"
           >
             <li>
               <router-link to="/profil"
-                ><IdentificationIcon class="size-6" /> your profil
+                ><IdentificationIcon class="size-6" /> Your Profile
               </router-link>
             </li>
-            <!-- <li>
-              <router-link to="/password"> cache password </router-link>
-            </li> -->
             <li>
               <button @click="logout" class="btn bg-error">Logout</button>
             </li>
           </ul>
         </div>
+
+        <!-- Login Button -->
         <router-link v-if="!isLoggedIn" to="/login" class="btn">
           Login
         </router-link>
@@ -241,6 +266,7 @@ import {
   BriefcaseIcon,
   BookOpenIcon,
   IdentificationIcon,
+  ShoppingCartIcon,
 } from "@heroicons/vue/24/solid";
 import jwt_decode from "jwt-decode";
 import apiClient from "@/service/inventaris";
@@ -255,6 +281,7 @@ export default {
     BriefcaseIcon,
     BookOpenIcon,
     IdentificationIcon,
+    ShoppingCartIcon,
   },
   data() {
     return {

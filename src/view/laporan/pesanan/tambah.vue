@@ -33,7 +33,6 @@
               v-model="description"
               placeholder="Deskripsi"
               class="textarea textarea-bordered"
-              required
             ></textarea>
             <div v-if="errors.description" class="error-message">
               <span>{{ errors.description[0] }}</span>

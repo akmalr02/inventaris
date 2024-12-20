@@ -160,7 +160,8 @@ export default {
         const response = await apiClient.get("/category");
         categories.value = response.data;
       } catch (error) {
-        console.error("Data tidak bisa diambil", error);
+        // console.error("Data tidak bisa diambil", error);
+        toast.error("Gagal mengambil data!", { autoClose: 3000 });
       }
     };
 
@@ -168,14 +169,15 @@ export default {
       try {
         const response = await apiClient.get(`/barang/${route.params.id}`);
         const barang = response.data;
-        console.log(barang);
+        // console.log(barang);
         name.value = barang.name;
         description.value = barang.description;
         categories_id.value = barang.categories_id;
         images.value = JSON.parse(barang.image);
         jumlah.value = barang.jumlah;
       } catch (error) {
-        console.error("Error fetching barang:", error);
+        // console.error("Error fetching barang:", error);
+        toast.error("Gagal mengambil data barang!", { autoClose: 3000 });
       }
     };
 
@@ -186,13 +188,13 @@ export default {
 
     const handleImageUpload = (event) => {
       const files = Array.from(event.target.files);
-      console.log(files);
+      // console.log(files);
 
       const validFiles = files.filter(
         (file) => file.type.startsWith("image/") && file.size <= 2048 * 1024
       );
       newImages.value = [...newImages.value, ...validFiles];
-      console.log(newImages);
+      // console.log(newImages);
     };
 
     const removeNewImage = (index) => {
@@ -230,10 +232,9 @@ export default {
             "Content-Type": "multipart/form-data",
           },
         });
-
         toast.success("Data barang berhasil diupdate", { autoClose: 3000 });
       } catch (error) {
-        console.error("Error response:", error.response);
+        // console.error("Error response:", error.response);
         if (
           error.response &&
           error.response.data &&

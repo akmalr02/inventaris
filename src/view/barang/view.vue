@@ -1,13 +1,13 @@
 <style></style>
 <template>
   <div class="bg-base-200 flex items-center justify-between w-full p-0">
-    <router-link
-      to="/barang"
+    <button
+      @click="goBack"
       class="btn btn-outline bg-black text-white gap-2 m-5"
     >
       <BackspaceIcon class="w-6 h-6 text-white" />
       Back
-    </router-link>
+    </button>
   </div>
 
   <div class="hero bg-base-200 m-0 p-5 rounded-lg shadow-lg w-full">
@@ -77,7 +77,6 @@
                       v-model="description"
                       placeholder="Deskripsi"
                       class="textarea textarea-bordered"
-                      required
                     ></textarea>
                     <div v-if="errors.description" class="error-message">
                       <span>{{ errors.description[0] }}</span>
@@ -248,10 +247,10 @@ export default {
           // Hapus tanda kurung array jika masih dalam bentuk string array JSON
           const parsedImage = JSON.parse(this.barang.image);
           this.data_gambar = parsedImage; // Simpan nama file gambar
-          console.log(this.data_gambar);
+          // console.log(this.data_gambar);
         }
 
-        console.log(this.image);
+        // console.log(this.image);
       } catch (error) {
         toast.error("Gagal mengambil data barang.", { autoClose: 3000 });
       }
@@ -287,9 +286,13 @@ export default {
         toast.success("Pesanan berhasil ditambahkan.", { autoClose: 3000 });
         // console.log(data);
       } catch (error) {
-        console.error("Gagal menambahkan Pesanan:", error);
+        // console.error("Gagal menambahkan Pesanan:", error);
         toast.error("Gagal menambahkan Pesanan.", { autoClose: 3000 });
       }
+    },
+
+    goBack() {
+      this.$router.back();
     },
   },
 };

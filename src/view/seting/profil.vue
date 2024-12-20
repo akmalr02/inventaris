@@ -105,12 +105,18 @@
         <div class="collapse collapse-plus bg-base-200 border border-gray-400">
           <input type="radio" name="my-accordion-3" checked="checked" />
           <div class="collapse-title text-xl font-medium">Ubah Data Anda</div>
-          <div class="collapse-content">
+          <div class="collapse-content flex space-x-2">
             <router-link
               :to="{ name: 'editU', params: { id: id } }"
               class="btn btn-ghost"
             >
               <PencilIcon class="size-6 text-yellow-200-500" />Edit Profil
+            </router-link>
+            <router-link
+              :to="{ name: 'password', params: { id: id } }"
+              class="btn btn-ghost"
+            >
+              <PencilIcon class="size-6 text-yellow-200-500" />Ubah Password
             </router-link>
           </div>
         </div>

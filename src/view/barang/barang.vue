@@ -28,7 +28,7 @@
 </style>
 
 <template>
-  <div class="overflow-x-auto m-9">
+  <div class="flex items-center mt-4">
     <div class="px-4">
       <router-link
         v-if="userRole === 'admin' || userRole === 'pengelola'"
@@ -45,10 +45,12 @@
           v-model="searchQuery"
         />
       </div>
-      <div class="header">
-        <p class="font-bold">Barang</p>
-      </div>
     </div>
+  </div>
+  <div class="header">
+    <p class="font-bold">Barang</p>
+  </div>
+  <div class="overflow-x-auto m-9">
     <table class="table">
       <!-- head -->
       <thead>
@@ -139,191 +141,189 @@
         </tr>
       </tbody>
     </table>
-
-    <!-- bagian barang kosong -->
-
-    <dialog id="barangModal1" class="modal">
-      <div class="modal-box">
-        <h2 class="flex justify-center card-title text-center">
-          Buat Laporan Barang Kosong
-        </h2>
-        <form @submit.prevent="barangKosong" class="card-body pt-3">
-          <!-- Bagian nama Barang -->
-          <h3 class="text-center font-bold p-2">
-            Nama Barang : {{ selectedBarang?.name ?? "-" }}
-          </h3>
-
-          <!-- Bagian untuk memasukkan Deskripsi -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Deskripsi</span>
-            </label>
-            <textarea
-              v-model="description"
-              placeholder="Deskripsi"
-              class="textarea textarea-bordered"
-              required
-            ></textarea>
-            <div v-if="errors.description" class="error-message">
-              <span>{{ errors.description[0] }}</span>
-            </div>
-          </div>
-
-          <!-- Bagian untuk memilih Tanggal -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Tanggal</span>
-            </label>
-            <input
-              v-model="tanggal"
-              type="date"
-              :max="maxDate"
-              class="input input-bordered"
-              required
-            />
-            <div v-if="errors.tanggal" class="error-message">
-              <span>{{ errors.tanggal[0] }}</span>
-            </div>
-          </div>
-
-          <!-- Tombol Submit -->
-          <div class="form-control mt-2">
-            <button class="btn btn-primary p-3 mb-2" type="submit">
-              Submit
-            </button>
-          </div>
-        </form>
-        <div class="modal-action">
-          <button class="btn" @click="closeModal1">Tutup</button>
-        </div>
-      </div>
-    </dialog>
-
-    <!-- bagian barang rusak -->
-    <dialog id="barangModal2" class="modal">
-      <div class="modal-box">
-        <h2 class="flex justify-center card-title text-center">
-          Buat Laporan Barang Rusak
-        </h2>
-        <form
-          @submit.prevent="barangRusak"
-          enctype="multipart/form-data"
-          class="card-body pt-3"
-        >
-          <!-- Bagian nama barang -->
-          <h3 class="text-center font-bold p-2">
-            Nama Barang : {{ selectedBarang?.name ?? "-" }}
-          </h3>
-
-          <!-- Bagian untuk memasukkan Deskripsi -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Deskripsi</span>
-            </label>
-            <textarea
-              v-model="description"
-              placeholder="Deskripsi"
-              class="textarea textarea-bordered"
-              required
-            ></textarea>
-            <div v-if="errors.description" class="error-message">
-              <span>{{ errors.description[0] }}</span>
-            </div>
-          </div>
-
-          <!-- Bagian untuk memilih Tanggal -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Tanggal</span>
-            </label>
-            <input
-              v-model="tanggal"
-              type="date"
-              :max="maxDate"
-              class="input input-bordered"
-              required
-            />
-            <div v-if="errors.tanggal" class="error-message">
-              <span>{{ errors.tanggal[0] }}</span>
-            </div>
-          </div>
-
-          <!-- Bagian untuk memilih kondisi -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Pilih Kondisi</span>
-            </label>
-            <select
-              v-model="kondisiRusak"
-              class="select select-bordered w-full mt-2"
-              required
-            >
-              <option disabled value="">Pilih kondisi</option>
-              <option value="Ringan">Ringan</option>
-              <option value="Sedang">Sedang</option>
-              <option value="Berat">Berat</option>
-            </select>
-            <div v-if="errors.kondisiRusak" class="error-message">
-              <span>{{ errors.kondisiRusak[0] }}</span>
-            </div>
-          </div>
-
-          <!-- Jumlah Barang Rusak -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Jumlah Barang Rusak</span>
-            </label>
-            <input
-              v-model="jumlah_rusak"
-              type="text"
-              inputmode="numeric"
-              placeholder="Jumlah"
-              class="input input-bordered"
-              required
-            />
-            <div v-if="errors.barangRusak" class="error-message">
-              <span>{{ errors.barangRusak[0] }}</span>
-            </div>
-          </div>
-
-          <!-- Bagian untuk upload Gambar -->
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Images Barang Rusak</span>
-            </label>
-            <input
-              ref="imageInput"
-              type="file"
-              @change="handleImageUpload"
-              multiple
-              class="file-input file-input-bordered w-full max-w-xs mb-2"
-            />
-            <ul>
-              <li v-for="(image, index) in images" :key="index" class="mb-3">
-                {{ image.name }}
-                <button
-                  @click="removeImage(index)"
-                  class="btn btn-error btn-xs ml-2"
-                >
-                  X
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Tombol Submit -->
-          <div class="form-control mt-2">
-            <button class="btn btn-primary p-3 mb-2" type="submit">
-              Submit
-            </button>
-          </div>
-        </form>
-        <div class="modal-action">
-          <button class="btn" @click="closeModal2">Tutup</button>
-        </div>
-      </div>
-    </dialog>
   </div>
+
+  <!-- bagian barang kosong -->
+
+  <dialog id="barangModal1" class="modal">
+    <div class="modal-box">
+      <h2 class="flex justify-center card-title text-center">
+        Buat Laporan Barang Kosong
+      </h2>
+      <form @submit.prevent="barangKosong" class="card-body pt-3">
+        <!-- Bagian nama Barang -->
+        <h3 class="text-center font-bold p-2">
+          Nama Barang : {{ selectedBarang?.name ?? "-" }}
+        </h3>
+
+        <!-- Bagian untuk memasukkan Deskripsi -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Deskripsi</span>
+          </label>
+          <textarea
+            v-model="description"
+            placeholder="Deskripsi"
+            class="textarea textarea-bordered"
+            required
+          ></textarea>
+          <div v-if="errors.description" class="error-message">
+            <span>{{ errors.description[0] }}</span>
+          </div>
+        </div>
+
+        <!-- Bagian untuk memilih Tanggal -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Tanggal</span>
+          </label>
+          <input
+            v-model="tanggal"
+            type="date"
+            :max="maxDate"
+            class="input input-bordered"
+            required
+          />
+          <div v-if="errors.tanggal" class="error-message">
+            <span>{{ errors.tanggal[0] }}</span>
+          </div>
+        </div>
+
+        <!-- Tombol Submit -->
+        <div class="form-control mt-2">
+          <button class="btn btn-primary p-3 mb-2" type="submit">Submit</button>
+        </div>
+      </form>
+      <div class="modal-action">
+        <button class="btn" @click="closeModal1">Tutup</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- bagian barang rusak -->
+  <dialog id="barangModal2" class="modal">
+    <div class="modal-box">
+      <h2 class="flex justify-center card-title text-center">
+        Buat Laporan Barang Rusak
+      </h2>
+      <form
+        @submit.prevent="barangRusak"
+        enctype="multipart/form-data"
+        class="card-body pt-3"
+      >
+        <!-- Bagian nama barang -->
+        <h3 class="text-center font-bold p-2">
+          Nama Barang : {{ selectedBarang?.name ?? "-" }}
+        </h3>
+
+        <!-- Bagian untuk memasukkan Deskripsi -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Deskripsi</span>
+          </label>
+          <textarea
+            v-model="description"
+            placeholder="Deskripsi"
+            class="textarea textarea-bordered"
+            required
+          ></textarea>
+          <div v-if="errors.description" class="error-message">
+            <span>{{ errors.description[0] }}</span>
+          </div>
+        </div>
+
+        <!-- Bagian untuk memilih Tanggal -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Tanggal</span>
+          </label>
+          <input
+            v-model="tanggal"
+            type="date"
+            :max="maxDate"
+            class="input input-bordered"
+            required
+          />
+          <div v-if="errors.tanggal" class="error-message">
+            <span>{{ errors.tanggal[0] }}</span>
+          </div>
+        </div>
+
+        <!-- Bagian untuk memilih kondisi -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Pilih Kondisi</span>
+          </label>
+          <select
+            v-model="kondisiRusak"
+            class="select select-bordered w-full mt-2"
+            required
+          >
+            <option disabled value="">Pilih kondisi</option>
+            <option value="Ringan">Ringan</option>
+            <option value="Sedang">Sedang</option>
+            <option value="Berat">Berat</option>
+          </select>
+          <div v-if="errors.kondisiRusak" class="error-message">
+            <span>{{ errors.kondisiRusak[0] }}</span>
+          </div>
+        </div>
+
+        <!-- Jumlah Barang Rusak -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Jumlah Barang Rusak</span>
+          </label>
+          <input
+            v-model="jumlah_rusak"
+            type="text"
+            inputmode="numeric"
+            placeholder="Jumlah"
+            class="input input-bordered"
+            required
+          />
+          <div v-if="errors.barangRusak" class="error-message">
+            <span>{{ errors.barangRusak[0] }}</span>
+          </div>
+        </div>
+
+        <!-- Bagian untuk upload Gambar -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Images Barang Rusak</span>
+          </label>
+          <input
+            ref="imageInput"
+            type="file"
+            @change="handleImageUpload"
+            multiple
+            class="file-input file-input-bordered w-full max-w-xs mb-2"
+          />
+          <ul>
+            <li v-for="(image, index) in images" :key="index" class="mb-3">
+              {{ image.name }}
+              <button
+                type="button"
+                @click="removeImage(index)"
+                class="btn btn-error btn-xs ml-2"
+                title="Hapus gambar ini"
+              >
+                X
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Tombol Submit -->
+        <div class="form-control mt-2">
+          <button class="btn btn-primary p-3 mb-2" type="submit">Submit</button>
+        </div>
+      </form>
+      <div class="modal-action">
+        <button class="btn" @click="closeModal2">Tutup</button>
+      </div>
+    </div>
+  </dialog>
 </template>
 
 <script>
@@ -450,7 +450,9 @@ export default {
     };
 
     const removeImage = (index) => {
-      images.value.splice(index, 1);
+      const updatedImages = [...images.value]; // Salin array asli
+      updatedImages.splice(index, 1); // Hapus gambar berdasarkan index
+      images.value = updatedImages; // Perbarui array
     };
 
     onMounted(async () => {

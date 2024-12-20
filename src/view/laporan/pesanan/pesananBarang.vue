@@ -63,7 +63,7 @@
           </td>
           <td v-if="userRole === 'admin'">
             <router-link
-              :to="{ name: 'editBarangRusak', params: { id: laporan.id } }"
+              :to="{ name: 'editPesananBarang', params: { id: laporan.id } }"
               class="btn btn-outline btn-warning mbs-2"
               ><PencilIcon
                 class="size-6 text-yellow-200-500"
