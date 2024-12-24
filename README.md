@@ -18,7 +18,7 @@ Laravel Inventaris adalah aplikasi web untuk manajemen inventaris barang berbasi
 
 1. **Clone Repository**:
     ```bash
-    git clone https://github.com/username/laravel-inventaris.git
+    https://github.com/akmalr02/inventaris.git
     ```
 2. **Instal Dependensi**:
     ```
