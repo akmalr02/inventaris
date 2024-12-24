@@ -10,6 +10,7 @@
           type="text"
           placeholder="Search"
           class="input input-bordered w-20 md:w-48 max-w-xs"
+          v-model="searchQuery"
         />
       </div>
       <div class="header">
@@ -27,7 +28,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(category, index) in categories" :key="category.id">
+        <tr v-for="(category, index) in filteredCategory" :key="category.id">
           <th>{{ index + 1 }}</th>
           <td>{{ category.name }}</td>
           <td>{{ category.description }}</td>
@@ -47,6 +48,11 @@
         </tr>
       </tbody>
     </table>
+    <div v-if="filteredCategory.length === 0" class="my-5">
+      <h1 colspan="5" class="text-center font-bold text-4xl">
+        Data "{{ searchQuery }}" tidak ditemukan
+      </h1>
+    </div>
     <!-- Modal Edit -->
     <div
       v-if="showEditModal"
@@ -88,7 +94,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue"; // Add computed here
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import apiClient from "@/service/inventaris";
@@ -114,6 +120,7 @@ export default {
 
   setup() {
     const categories = ref([]);
+    const searchQuery = ref("");
     const selectedCategory = ref({ name: "", description: "" });
     const showEditModal = ref(false);
     const category_id = ref(null);
@@ -123,7 +130,6 @@ export default {
       try {
         const response = await apiClient.get("/category");
         categories.value = response.data;
-        // console.log(categories);
       } catch (error) {
         toast.error("Gagal mengambil data kategori.", { autoClose: 3000 });
       }
@@ -132,7 +138,6 @@ export default {
     const openEditModal = (categories) => {
       selectedCategory.value = categories;
       category_id.value = categories.id;
-      // console.log(selectedCategory.value);
       showEditModal.value = true;
     };
     const closeEditModal = () => {
@@ -150,26 +155,40 @@ export default {
         formData.append("name", selectedCategory.value.name);
         formData.append("description", selectedCategory.value.description);
         formData.append("_method", "PATCH");
-        // formData.forEach((value, key) => {
-        //   console.log(`${key}: ${value}`);
-        // });
 
         const response = await apiClient.post(
           `/category/${selectedCategory.value.id}`,
           formData
         );
-        // console.log(response.data);
 
         toast.success("Kategori berhasil diperbarui.", { autoClose: 3000 });
         closeEditModal();
       } catch (error) {
         toast.error("Gagal memperbarui kategori.", { autoClose: 3000 });
-        // console.error(error);s
       }
     };
 
+    const filteredCategory = computed(() => {
+      if (!searchQuery.value) {
+        return categories.value;
+      }
+      return categories.value.filter((category) => {
+        const searchLower = searchQuery.value.toLowerCase();
+        return (
+          category.name
+            ?.toLowerCase()
+            .includes(searchQuery.value.toLowerCase()) ||
+          category.description
+            ?.toLowerCase()
+            .includes(searchQuery.value.toLowerCase())
+        );
+      });
+    });
+
     return {
       categories,
+      searchQuery,
+      filteredCategory,
       selectedCategory,
       category_id,
       showEditModal,

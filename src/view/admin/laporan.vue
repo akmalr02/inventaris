@@ -201,7 +201,7 @@ export default {
       try {
         const response = await apiClient.get("/pesanan");
         this.pesanan = response.data;
-        console.log(this.pesanan);
+        // console.log(this.pesanan);
       } catch (error) {
         console.error("Error:", error);
       }

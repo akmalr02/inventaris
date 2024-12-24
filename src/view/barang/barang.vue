@@ -141,6 +141,11 @@
         </tr>
       </tbody>
     </table>
+    <div v-if="filteredBarang.length === 0" class="my-5">
+      <h1 colspan="5" class="text-center font-bold text-4xl">
+        Data "{{ searchQuery }}" tidak ditemukan
+      </h1>
+    </div>
   </div>
 
   <!-- bagian barang kosong -->

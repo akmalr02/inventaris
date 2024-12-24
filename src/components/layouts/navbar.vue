@@ -91,7 +91,10 @@
             />
 
             <!-- barang untuk admin dan pengelola -->
-            <li v-if="userRole === 'admin'" class="mb-1">
+            <li
+              v-if="userRole === 'admin' || userRole === 'pengelola'"
+              class="mb-1"
+            >
               <router-link
                 to="/barang"
                 class="text-lg transition-colors mx-2 p-2"

@@ -111,7 +111,7 @@ onMounted(async () => {
   try {
     const authStore = useAuthStore();
     const user = authStore.user;
-    console.log(user);
+    // console.log(user);
     name.value = user.name;
     email.value = user.email;
     phone.value = user.phone;
