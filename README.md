@@ -1,29 +1,23 @@
-# inventaris
+#Vue.js Inventaris
 
-This template should help get you started developing with Vue 3 in Vite.
 
-## Recommended IDE Setup
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+#Deskripsi
 
-## Customize configuration
+Vue.js Inventaris adalah aplikasi frontend untuk manajemen inventaris barang. Aplikasi ini dibangun menggunakan Vue.js dengan berbagai fitur modern seperti state management dengan Pinia dan komponen UI dari DaisyUI.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+Fitur
 
-## Project Setup
+Manajemen Barang: Pengelolaan stok barang, pemakaian barang, dan pencatatan barang rusak.
 
-```sh
-npm install
-```
+Visualisasi Data: Menggunakan ApexCharts untuk menampilkan grafik data inventaris.
 
-### Compile and Hot-Reload for Development
+Notifikasi: Notifikasi toast menggunakan Vue3-Toastify.
 
-```sh
-npm run dev
-```
+Integrasi API: Menggunakan Axios untuk komunikasi dengan backend.
 
-### Compile and Minify for Production
+Routing: Navigasi halaman yang lancar dengan Vue Router.
 
-```sh
-npm run build
-```
+Instalasi
+
+1. 
